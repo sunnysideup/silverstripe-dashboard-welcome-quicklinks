@@ -1,12 +1,3 @@
 ---
-Name: yes_no_any_filter
+Name: dashboard_welcome_quicklinks
 ---
-
-SilverStripe\ORM\FieldType\DBBoolean:
-  extensions:
-    - Sunnysideup\YesNoAnyFilter\DBBooleanColourfull
-
-
-SilverStripe\ORM\DataObject:
-  extensions:
-    - Sunnysideup\YesNoAnyFilter\FixBooleanSearchAsExtension

@@ -15,6 +15,16 @@ These classes then have a method:
                         [
                             'Title' => 'Click here',
                             'Link' => 'https://docs.silverstripe.org',
+                            'OnClick' => 'alert("Are you sure?")',
+                            'Script' => '',
+                            'Style' => '',
+                        ],                        
+                        [
+                            'Title' => 'Click here',
+                            'Link' => MyModelAdmin::class,
+                            'OnClick' => 'alert("Are you sure?")',
+                            'Script' => '',
+                            'Style' => '',
                         ],
                     ],
                 ],
