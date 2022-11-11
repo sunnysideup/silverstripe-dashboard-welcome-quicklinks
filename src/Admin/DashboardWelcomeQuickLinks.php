@@ -61,6 +61,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $shortcuts = $this->getLinksFromImplementor();
         if (count($shortcuts)) {
             $html = '<div class="grid-wrapper">';
+            $form->Fields()->push(HeaderField::create('UsefulLinks', 'Short-cuts', 1));
 
             usort(
                 $shortcuts,
@@ -74,7 +75,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 <div class="grid-cell">
                     <h1>' . ($groupDetails['Title'] ?? 'Links') . '</h1>';
                 $items = $groupDetails['Items'] ?? [];
-                if(!empty($entry['Link']) && class_exists($entry['Link'])) {
+                if(! empty($entry['Link'])&& class_exists($entry['Link'])) {
                     $entry['Link'] = Injector::inst()->get($entry['Link'])->Link();
                 }
                 foreach ($items as $entry) {
@@ -132,12 +133,23 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if ($script) {
             $script = '<script>' . $script . '</script>';
         }
-        $html = '
-        ' . $script . '
-        <h2 style="' . $style . '">
-            &raquo; <a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
-        </h2>';
-
+        if($link) {
+            $html = '
+            ' . $script . '
+            <h2 style="' . $style . '">
+                &raquo; <a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
+            </h2>';
+        } else {
+            $html = '
+            ' . $script . '
+            <p>
+                &raquo; '.$title . '
+            </p>
+            ';
+        }
+        if($style) {
+            $html .= '<style>'.$style.'</style>';
+        }
         return LiteralField::create(
             $name,
             $html
