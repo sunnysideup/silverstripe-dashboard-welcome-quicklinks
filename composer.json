@@ -1,0 +1,30 @@
+{
+  "name": "sunnysideup/dashboard-welcome-quicklinks",
+  "type": "silverstripe-vendormodule",
+  "description": "Provide a welcome screen for users",
+  "keywords": [
+    "Silverstripe-CMS",
+    "CMS",
+    "Silverstripe",
+    "Welcome",
+    "Dashboard",
+    "Quicklinks",
+    "Shortcuts"
+  ],
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Nicolaas Francken",
+      "email": "modules@sunnysideup.co.nz",
+      "role": "lead developer"
+    }
+  ],
+  "require": {
+    "silverstripe/recipe-core": "^4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sunnysideup\\DashboardWelcomeQuicklinks\\": "src/"
+    }
+  }
+}
