@@ -1,4 +1,4 @@
-# Silverstripe dashboard-welcome-quicklinks module
+# Silverstripe dashboard welcome quicklinks module
 [![Build Status](https://travis-ci.org/sunnysideup/silverstripe-dashboard-welcome-quicklinks.svg?branch=master)](https://travis-ci.org/sunnysideup/silverstripe-dashboard-welcome-quicklinks)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-dashboard-welcome-quicklinks/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-dashboard-welcome-quicklinks/?branch=master)
 [![codecov.io](https://codecov.io/github/sunnysideup/silverstripe-dashboard-welcome-quicklinks/coverage.svg?branch=master)](https://codecov.io/github/sunnysideup/silverstripe-dashboard-welcome-quicklinks?branch=master)

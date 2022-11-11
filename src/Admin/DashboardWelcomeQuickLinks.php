@@ -3,7 +3,7 @@
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
 
-DashboardWelcomeQuicklinks extends LeftAndMain
+class DashboardWelcomeQuicklinks extends LeftAndMain
 {
 
 }
