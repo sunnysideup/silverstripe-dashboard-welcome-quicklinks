@@ -11,6 +11,8 @@ These classes then have a method:
                 'MyGroupCode' => [
                     'Title' => 'Cool Stuff',
                     'SortOrder' => 12,
+                    'Colour' => '#555777',
+                    'IconClass' => 'font-icon-p-virtual',
                     'Items' => [
                         [
                             'Title' => 'Click here',
@@ -18,13 +20,11 @@ These classes then have a method:
                             'OnClick' => 'alert("Are you sure?")',
                             'Script' => '',
                             'Style' => '',
+                            'IconClass' => 'font-icon-p-virtual',
                         ],                        
                         [
                             'Title' => 'Click here',
                             'Link' => MyModelAdmin::class,
-                            'OnClick' => 'alert("Are you sure?")',
-                            'Script' => '',
-                            'Style' => '',
                         ],
                     ],
                 ],

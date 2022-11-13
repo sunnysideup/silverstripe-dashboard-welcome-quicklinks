@@ -13,6 +13,7 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
 
 
 class DashboardWelcomeQuicklinks extends LeftAndMain
@@ -61,7 +62,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $shortcuts = $this->getLinksFromImplementor();
         if (count($shortcuts)) {
             $html = '<div class="grid-wrapper">';
-            $form->Fields()->push(HeaderField::create('UsefulLinks', 'Short-cuts', 1));
 
             usort(
                 $shortcuts,
@@ -70,13 +70,26 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 }
             );
 
-            foreach ($shortcuts as $group => $groupDetails) {
+            foreach ($shortcuts as $groupCode => $groupDetails) {
+                $colour = '';
+                if(! empty($groupDetails['Colour'])) {
+                    $colour = 'style="background-color: '.$groupDetails['Colour'].'"';
+                }
+                $icon = '';
+                if(! empty($groupDetails['IconClass'])) {
+                    $icon = '<i class="'.$groupDetails['IconClass'].'"></i> ';
+                }
                 $html .= '
-                <div class="grid-cell">
-                    <h1>' . ($groupDetails['Title'] ?? 'Links') . '</h1>';
+                <div class="grid-cell" '.$colour.'>
+                    <h1>'.$icon.'' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
                 $items = $groupDetails['Items'] ?? [];
                 if(! empty($entry['Link'])&& class_exists($entry['Link'])) {
-                    $entry['Link'] = Injector::inst()->get($entry['Link'])->Link();
+                    $obj = Injector::inst()->get();
+                    if($obj instanceof DataObject) {
+                        $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
+                    } else {
+                        $entry['Link'] = $obj->Link();
+                    }
                 }
                 foreach ($items as $entry) {
                     $html .= $this->makeShortCut(
@@ -85,6 +98,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['OnClick'] ?? '',
                         $entry['Script'] ?? '',
                         $entry['Style'] ?? '',
+                        $entry['IconClass'] ?? '',
                     )->Field();
                 }
                 $html .= '</div>';
@@ -123,7 +137,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     }
 
 
-    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '')
+    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass)
     {
         $name = preg_replace('#[\W_]+#u', '', $title);
         $html = '';
@@ -133,11 +147,15 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if ($script) {
             $script = '<script>' . $script . '</script>';
         }
+        $icon = '';
+        if(! empty($iconClass)) {
+            $icon = '<i class="'.$iconClass.'"></i> ';
+        }
         if($link) {
             $html = '
             ' . $script . '
             <h2 style="' . $style . '">
-                &raquo; <a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
+                &raquo; '.$icon.'<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
             $html = '
