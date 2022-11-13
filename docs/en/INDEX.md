@@ -34,3 +34,10 @@ These classes then have a method:
 
 
 ```
+
+Go to `admin/go` by default:
+
+```yml
+SilverStripe\Admin\AdminRootController:
+  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+```

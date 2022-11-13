@@ -1,3 +1,7 @@
 ---
 Name: dashboard_welcome_quicklinks
 ---
+
+# recommended!
+# SilverStripe\Admin\AdminRootController:
+#   default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
