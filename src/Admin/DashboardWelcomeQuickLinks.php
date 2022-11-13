@@ -21,7 +21,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static $url_segment = 'go';
 
-    private static $menu_title = 'Quicklinks';
+    private static $menu_title = 'Quick-links';
 
     private static $menu_icon_class = 'font-icon-dashboard';
 
