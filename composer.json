@@ -17,7 +17,12 @@
       "name": "Nicolaas Francken",
       "email": "modules@sunnysideup.co.nz",
       "role": "lead developer"
-    }
+    },
+    {
+      "name": "Simon Erkelens",
+      "email": "simon@sunnysideup.co.nz",
+      "role": "ideas and review"
+    }    
   ],
   "require": {
     "silverstripe/recipe-core": "^4.0"
