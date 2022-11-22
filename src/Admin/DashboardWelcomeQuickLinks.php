@@ -130,7 +130,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             color: #222!important;
         }
         .grid-cell h1 {
-            border-bottom: 1px solid #222
+            border-bottom: 1px solid #777
         }
         </style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
