@@ -104,6 +104,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 $html .= '</div>';
             }
         }
+        $kc = ['#F2F3F4', '#222222', '#F3C300', '#875692', '#F38400', '#A1CAF1', '#BE0032', '#C2B280', '#848482', '#008856', '#E68FAC', '#0067A5', '#F99379', '#604E97', '#F6A600', '#B3446C', '#DCD300', '#882D17', '#8DB600', '#654522', '#E25822', '#2B3D26'];
+        $kcCount = count($kc);
+        $colours = '';
+        foreach($kc as $key => $colour) {
+            $colours .= ' .grid-cell:nth-child('.$kcCount.'n+'.($key+1).') {background-color: '.$colour.'55;}';
+        }
         $html .= '</div>';
         $html .= '<style>
 
@@ -119,13 +125,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
           border-radius: 1rem;
           border: 1px dashed #004e7f55;
         }
-        .grid-cell:nth-child(7n+1) {background-color:#DFFF0077;}
-        .grid-cell:nth-child(7n+2) {background-color:#FFBF0077;}
-        .grid-cell:nth-child(7n+3) {background-color:#FF7F5077;}
-        .grid-cell:nth-child(7n+4) {background-color:#DE316377;}
-        .grid-cell:nth-child(7n+5) {background-color:#9FE2BF77;}
-        .grid-cell:nth-child(7n+6) {background-color:#40E0D077;}
-        .grid-cell:nth-child(7n+7) {background-color:#CCCCFF77;}
+        '.$colours.'
         .grid-cell * {
             color: #222!important;
         }
