@@ -126,6 +126,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         .grid-cell:nth-child(7n+5) {background-color:#9FE2BF77;}
         .grid-cell:nth-child(7n+6) {background-color:#40E0D077;}
         .grid-cell:nth-child(7n+7) {background-color:#CCCCFF77;}
+        .grid-cell * {
+            color: #222!important;
+        }
+        .grid-cell h1 {
+            border-bottom: 1px solid #222
+        }
         </style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
     }
