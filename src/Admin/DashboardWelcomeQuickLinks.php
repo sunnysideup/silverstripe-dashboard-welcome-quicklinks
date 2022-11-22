@@ -114,13 +114,18 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         }
 
         .grid-cell {
-          background-color: #e9f0f4;
           padding: 20px;
           font-size: 150%;
           border-radius: 1rem;
           border: 1px dashed #004e7f55;
         }
-
+        .grid-cell:nth-child(7n+1) {background-color:#DFFF00;}
+        .grid-cell:nth-child(7n+2) {background-color:#FFBF00;}
+        .grid-cell:nth-child(7n+3) {background-color:#FF7F50;}
+        .grid-cell:nth-child(7n+4) {background-color:#DE3163;}
+        .grid-cell:nth-child(7n+5) {background-color:#9FE2BF;}
+        .grid-cell:nth-child(7n+6) {background-color:#40E0D0;}
+        .grid-cell:nth-child(7n+7) {background-color:#CCCCFF;}
         </style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
     }
