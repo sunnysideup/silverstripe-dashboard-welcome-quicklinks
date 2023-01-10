@@ -60,6 +60,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     public function updateFormWithQuicklinks($form)
     {
         $shortcuts = $this->getLinksFromImplementor();
+        $html = '';
         if (count($shortcuts)) {
             $html = '<div class="grid-wrapper">';
 
