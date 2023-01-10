@@ -85,7 +85,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     <h1>'.$icon.'' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
                 $items = $groupDetails['Items'] ?? [];
                 if(! empty($entry['Link'])&& class_exists($entry['Link'])) {
-                    $obj = Injector::inst()->get();
+                    $obj = Injector::inst()->get($entry['Link']);
                     if($obj instanceof DataObject) {
                         $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
                     } else {
