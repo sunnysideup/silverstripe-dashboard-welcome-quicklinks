@@ -1,24 +1,17 @@
 <?php
 
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
-use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
 use SilverStripe\Admin\LeftAndMain;
-
-use SilverStripe\Core\Injector\Injector;
-
 use SilverStripe\Core\ClassInfo;
-
-use SilverStripe\Forms\HeaderField;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
-
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
-
+use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
-
     private static $url_segment = 'go';
 
     private static $menu_title = 'Quick-links';
@@ -37,9 +30,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         // $form->Fields()->removeByName('LastVisited');
 
         $this->updateFormWithQuicklinks($form);
+
         return $form;
     }
-
 
     /**
      * Only show first element, as the profile form is limited to editing
@@ -66,27 +59,27 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
             usort(
                 $shortcuts,
-                function($a, $b) {
+                function ($a, $b) {
                     ($a['SortOrder'] ?? 0) <=> ($b['SortOrder'] ?? 0);
                 }
             );
 
             foreach ($shortcuts as $groupCode => $groupDetails) {
                 $colour = '';
-                if(! empty($groupDetails['Colour'])) {
-                    $colour = 'style="background-color: '.$groupDetails['Colour'].'"';
+                if (! empty($groupDetails['Colour'])) {
+                    $colour = 'style="background-color: ' . $groupDetails['Colour'] . '"';
                 }
                 $icon = '';
-                if(! empty($groupDetails['IconClass'])) {
-                    $icon = '<i class="'.$groupDetails['IconClass'].'"></i> ';
+                if (! empty($groupDetails['IconClass'])) {
+                    $icon = '<i class="' . $groupDetails['IconClass'] . '"></i> ';
                 }
                 $html .= '
-                <div class="grid-cell" '.$colour.'>
-                    <h1>'.$icon.'' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
+                <div class="grid-cell" ' . $colour . '>
+                    <h1>' . $icon . '' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
                 $items = $groupDetails['Items'] ?? [];
-                if(! empty($entry['Link'])&& class_exists($entry['Link'])) {
+                if (! empty($entry['Link']) && class_exists($entry['Link'])) {
                     $obj = Injector::inst()->get($entry['Link']);
-                    if($obj instanceof DataObject) {
+                    if ($obj instanceof DataObject) {
                         $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
                     } else {
                         $entry['Link'] = $obj->Link();
@@ -108,8 +101,8 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $kc = ['#F2F3F4', '#222222', '#F3C300', '#875692', '#F38400', '#A1CAF1', '#BE0032', '#C2B280', '#848482', '#008856', '#E68FAC', '#0067A5', '#F99379', '#604E97', '#F6A600', '#B3446C', '#DCD300', '#882D17', '#8DB600', '#654522', '#E25822', '#2B3D26'];
         $kcCount = count($kc);
         $colours = '';
-        foreach($kc as $key => $colour) {
-            $colours .= ' .grid-cell:nth-child('.$kcCount.'n+'.($key+1).') {background-color: '.$colour.'55;}';
+        foreach ($kc as $key => $colour) {
+            $colours .= ' .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') {background-color: ' . $colour . '55;}';
         }
         $html .= '</div>';
         $html .= '<style>
@@ -126,7 +119,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
           border-radius: 1rem;
           border: 1px dashed #004e7f55;
         }
-        '.$colours.'
+        ' . $colours . '
         .grid-cell * {
             color: #222!important;
         }
@@ -148,7 +141,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         return $array;
     }
 
-
     protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass = '')
     {
         $name = preg_replace('#[\W_]+#u', '', (string) $title);
@@ -160,31 +152,30 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
-        if(! empty($iconClass)) {
-            $icon = '<i class="'.$iconClass.'"></i> ';
+        if (! empty($iconClass)) {
+            $icon = '<i class="' . $iconClass . '"></i> ';
         }
-        if($link) {
+        if ($link) {
             $html = '
             ' . $script . '
             <h2 style="' . $style . '">
-                &raquo; '.$icon.'<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
+                &raquo; ' . $icon . '<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
             $html = '
             ' . $script . '
             <p>
-                &raquo; '.$title . '
+                &raquo; ' . $title . '
             </p>
             ';
         }
-        if($style) {
-            $html .= '<style>'.$style.'</style>';
+        if ($style) {
+            $html .= '<style>' . $style . '</style>';
         }
+
         return LiteralField::create(
             $name,
             $html
         );
     }
-
-
 }
