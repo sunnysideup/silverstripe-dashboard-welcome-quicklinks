@@ -151,7 +151,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass = '')
     {
-        $name = preg_replace('#[\W_]+#u', '', $title);
+        $name = preg_replace('#[\W_]+#u', '', (string) $title);
         $html = '';
         if ($onclick) {
             $onclick = ' onclick="' . $onclick . '"';
