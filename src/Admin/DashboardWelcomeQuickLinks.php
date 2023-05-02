@@ -10,6 +10,10 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
+/**
+ * Class \Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
+ *
+ */
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
     private static $url_segment = 'go';
