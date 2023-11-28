@@ -70,18 +70,18 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
             foreach ($shortcuts as $groupCode => $groupDetails) {
                 $colour = '';
-                if (! empty($groupDetails['Colour'])) {
+                if (!empty($groupDetails['Colour'])) {
                     $colour = 'style="background-color: ' . $groupDetails['Colour'] . '"';
                 }
                 $icon = '';
-                if (! empty($groupDetails['IconClass'])) {
+                if (!empty($groupDetails['IconClass'])) {
                     $icon = '<i class="' . $groupDetails['IconClass'] . '"></i> ';
                 }
                 $html .= '
                 <div class="grid-cell" ' . $colour . '>
                     <h1>' . $icon . '' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
                 $items = $groupDetails['Items'] ?? [];
-                if (! empty($entry['Link']) && class_exists($entry['Link'])) {
+                if (!empty($entry['Link']) && class_exists($entry['Link'])) {
                     $obj = Injector::inst()->get($entry['Link']);
                     if ($obj instanceof DataObject) {
                         $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
@@ -156,7 +156,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
-        if (! empty($iconClass)) {
+        if (!empty($iconClass)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
         if ($link) {
