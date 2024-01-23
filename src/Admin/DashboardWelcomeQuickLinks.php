@@ -163,7 +163,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $html = '
             ' . $script . '
             <h2 style="' . $style . '">
-                &raquo; ' . $icon . '<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
+                ' . $icon . '<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
             $html = '
