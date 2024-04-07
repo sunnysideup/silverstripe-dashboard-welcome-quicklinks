@@ -36,7 +36,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addSecurityLinks()
     {
         $this->addGroup('SECURITY', 'Security', 20);
-        $this->addLink('SECURITY', 'Create new user', '/admin/security/addmember');
+        $this->addLink('SECURITY', 'Create new user', '/admin/security/users/EditForm/field/users/item/new');
         $this->addLink('SECURITY', 'Review Users', '/admin/security');
         $this->addLink('SECURITY', 'Review Users Groups', '/admin/security/groups');
     }
