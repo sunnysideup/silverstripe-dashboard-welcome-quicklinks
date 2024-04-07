@@ -109,8 +109,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                         }
                     }
                 }
-            } else {
-
             }
         }
     }
