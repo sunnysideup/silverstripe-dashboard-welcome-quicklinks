@@ -8,6 +8,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
 /**
@@ -17,6 +18,8 @@ use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinks
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
     private static $url_segment = 'go';
+
+    private static $use_default_dashboard = true;
 
     private static $menu_title = 'Quick-links';
 
@@ -114,10 +117,11 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         .grid-wrapper {
           display: grid;
           grid-template-columns: repeat( auto-fit, minmax(300px, 1fr) );;
-          grid-gap: 10px;
+          grid-gap: 20px;
         }
 
         .grid-cell {
+          max-width: 500px;
           padding: 20px;
           font-size: 150%;
           border-radius: 1rem;
@@ -137,11 +141,14 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     protected function getLinksFromImplementor()
     {
         $array = [];
+        $useDefaultDashboard = $this->config()->get('use_default_dashboard');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
         foreach ($classNames as $className) {
+            if($useDefaultDashboard === false && $className === DefaultDashboardProvider::class) {
+                continue;
+            }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
         }
-
         return $array;
     }
 
