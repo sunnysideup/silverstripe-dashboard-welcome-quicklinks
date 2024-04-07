@@ -6,6 +6,8 @@ use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\DefaultAdminService;
+use SilverStripe\Security\Permission;
 use SilverStripe\VersionedAdmin\ArchiveAdmin;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
@@ -16,6 +18,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     public function provideDashboardWelcomeQuickLinks(): array
     {
         $this->addPagesLinks();
+        $this->addSiteConfigLinks();
         $this->addSecurityLinks();
         $this->addModelAdminLinks();
         return $this->links;
@@ -25,37 +28,34 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addPagesLinks()
     {
         $this->addGroup('PAGES', 'Pages', 10);
-        $this->addLink('PAGES', 'Create new page', '/admin/pages/add');
-        $this->addLink('PAGES', 'Open Sitetree', '/admin/pages');
+        $this->addLink('PAGES', '+ Add Page', '/admin/pages/add');
+        $this->addLink('PAGES', '✎ Edit Pages', '/admin/pages');
         $pageLastEdited = DataObject::get_one('Page', '', true, 'LastEdited DESC');
         if ($pageLastEdited) {
-            $this->addLink('PAGES', 'Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
+            $this->addLink('PAGES', '✎ Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
+        }
+        $this->addLink('PAGES', '☑ Review Page Reports', '/admin/reports');
+    }
+
+    protected function addSiteConfigLinks()
+    {
+        $this->addGroup('SITECONFIG', '☑ Site Wide Configuration', 20);
+        $this->addLink('SITECONFIG', '☑ Review Site Configuration', '/admin/settings');
+    }
+    protected function addSecurityLinks()
+    {
+        $this->addGroup('SECURITY', 'Security', 30);
+        $this->addLink('SECURITY', '+ Add user', '/admin/security/users/EditForm/field/users/item/new');
+        $this->addLink('SECURITY', '☑ Review Users', '/admin/security');
+        $this->addLink('SECURITY', '☑ Review Users Groups', '/admin/security/groups');
+        DefaultAdminService::singleton()->extend('addSecurityLinks', $this);
+        $adminGroup = Permission::get_groups_by_permission('ADMIN')->first();
+        if($adminGroup) {
+            $this->addLink('SECURITY', '☑ Review Administrators', '/admin/security/groups/EditForm/field/groups/item/'.$adminGroup->ID.'/edit');
         }
     }
 
-    protected function addSecurityLinks()
-    {
-        $this->addGroup('SECURITY', 'Security', 20);
-        $this->addLink('SECURITY', 'Create new user', '/admin/security/users/EditForm/field/users/item/new');
-        $this->addLink('SECURITY', 'Review Users', '/admin/security');
-        $this->addLink('SECURITY', 'Review Users Groups', '/admin/security/groups');
-    }
 
-    protected function addGroup(string $groupCode, string $title, $sort)
-    {
-        $this->links[$groupCode] = [
-            'Title' => $title,
-            'SortOrdre' => $sort,
-        ];
-    }
-
-    protected function addLink($groupCode, $title, $link)
-    {
-        $this->links[$groupCode]['Items'][] = [
-            'Title' => $title,
-            'Link' => $link,
-        ];
-    }
 
 
     protected function addModelAdminLinks()
@@ -99,13 +99,13 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     } else {
                         $link = $ma->getLinkForModelTab($model);
                     }
-                    $this->addLink($groupCode, $title, $link);
+                    $this->addLink($groupCode, '✎ '.$title, $link);
                     if($numberOfModels < 4) {
                         $obj = Injector::inst()->get($model);
                         if($obj->canCreate()) {
                             $classNameEscaped = str_replace('\\', '-', $model);
                             $linkNew = $link .= '/EditForm/field/'.$classNameEscaped.'/item/new';
-                            $this->addLink($groupCode, 'New '.$obj->i18n_singular_name(), $linkNew);
+                            $this->addLink($groupCode, '+ New '.$obj->i18n_singular_name(), $linkNew);
                         }
                     }
                 }
@@ -114,4 +114,22 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             }
         }
     }
+
+
+    protected function addGroup(string $groupCode, string $title, $sort)
+    {
+        $this->links[$groupCode] = [
+            'Title' => $title,
+            'SortOrdre' => $sort,
+        ];
+    }
+
+    protected function addLink($groupCode, $title, $link)
+    {
+        $this->links[$groupCode]['Items'][] = [
+            'Title' => $title,
+            'Link' => $link,
+        ];
+    }
+
 }
