@@ -29,12 +29,12 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     public function provideDashboardWelcomeQuickLinks(): array
     {
         $this->addPagesLinks();
+        $this->addFindPages();
         $this->addFilesAndImages();
         $this->addSiteConfigLinks();
         $this->addSecurityLinks();
         $this->addModelAdminLinks();
         $this->addMeLinks();
-        $this->addFindPages();
         return $this->links;
     }
 
@@ -58,6 +58,31 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $this->addLink('PAGES', $this->phrase('review'). ' Recently Modified Pages', $lastWeekLink);
     }
 
+    protected function addFindPages()
+    {
+        $pages = [];
+        foreach (ClassInfo::subclassesFor(SiteTree::class, false) as $className) {
+            $pages[$className] = $className;
+
+        }
+        $this->addGroup('PAGEFILTER', 'Page Types ('.count($pages).')', 300);
+        $count = 0;
+        foreach($pages as $pageClassName) {
+            $pageCount = $pageClassName::get()->count();
+            if($pageCount < 1) {
+                continue;
+            }
+            $count++;
+            if($count > 12) {
+                break;
+            }
+            $page = Injector::inst()->get($pageClassName);
+            $pageTitle = $page->i18n_singular_name();
+            $query = urlencode('q[ClassName]='.$pageClassName);
+            $link = 'admin/pages?' . $query;
+            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
+        }
+    }
     protected function addFilesAndImages()
     {
         // 'Files ('.$filesCount.') and Images ('.$imageCount.')'
@@ -150,14 +175,18 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     } else {
                         $link = $ma->getLinkForModelTab($model);
                     }
+                    $objectCount = $model::get()->count();
+                    $titleContainsObjectCount = strpos($title, ' ('.$objectCount.')');
+                    if($titleContainsObjectCount === false) {
+                        $title .= ' ('.$objectCount.')';
+                    }
                     $this->addLink($groupCode, $this->phrase('edit'). ' '.$title, $link);
                     if($numberOfModels < 4) {
                         $obj = Injector::inst()->get($model);
                         if($obj->canCreate()) {
                             $classNameEscaped = str_replace('\\', '-', $model);
                             $linkNew = $link .= '/EditForm/field/'.$classNameEscaped.'/item/new';
-                            $objectCount = $model::get()->count();
-                            $this->addLink($groupCode, $this->phrase('add'). ' '.$obj->i18n_singular_name() . ' ('.$objectCount.')', $linkNew);
+                            $this->addLink($groupCode, $this->phrase('add'). ' '.$obj->i18n_singular_name(), $linkNew);
                         }
                     }
                 }
@@ -166,36 +195,12 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     }
 
 
-    protected function addFindPages()
-    {
-        $pages = [];
-        foreach (ClassInfo::subclassesFor(SiteTree::class, false) as $className) {
-            $pages[$className] = $className;
-
-        }
-        $this->addGroup('PAGEFILTER', 'Page Types ('.count($pages).')', 300);
-        $count = 0;
-        foreach($pages as $pageClassName) {
-            $pageCount = $pageClassName::get()->count();
-            if($pageCount < 1) {
-                continue;
-            }
-            $count++;
-            if($count > 12) {
-                break;
-            }
-            $page = Injector::inst()->get($pageClassName);
-            $pageTitle = $page->i18n_singular_name();
-            $query = urlencode('q[ClassName]='.$pageClassName);
-            $link = 'admin/pages?' . $query;
-            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
-        }
-    }
 
     protected function addMeLinks()
     {
         $this->addGroup('ME', 'My Account', 200);
-        $this->addLink('ME', $this->phrase('edit') . '  My Details', '/admin/myprofile');
+        $this->addLink('ME', $this->phrase('edit') . '  My Details (there is just one of you!)', '/admin/myprofile');
+        $this->addLink('ME', $this->phrase('review') . '  Test Password Reset', 'Security/lostpassword');
         $this->addLink('ME', $this->phrase('review') . '  Log-out', '/Security/logout');
     }
 
