@@ -1,6 +1,20 @@
-Any class can implement the `DashboardWelcomeQuickLinksProvider` interface.
+# example
 
-These classes then have a method:
+[Link to example.png](example.png)
+
+# Defaults
+
+There is a Default implementation of this interface called `DefaultDashboardProvider`. You can extend this class and add your own methods to it.
+However, if you do not want the default ones, you can turn it off like this:
+
+```yml
+Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
+    use_default_dashboard_provider: false
+```
+
+You can add your own classes that implement the `DashboardProviderInterface` interface.
+
+These classes should then have the following method:
 
 ```php
 
@@ -21,10 +35,14 @@ These classes then have a method:
                             'Script' => '',
                             'Style' => '',
                             'IconClass' => 'font-icon-p-virtual',
-                        ],                        
+                            'Target' => '_blank',
+                        ],
                         [
                             'Title' => 'Click here',
                             'Link' => MyModelAdmin::class,
+                        ],
+                        [
+                            'Title' => 'Just a note',
                         ],
                     ],
                 ],
@@ -35,9 +53,13 @@ These classes then have a method:
 
 ```
 
-Go to `admin/go` by default:
+You can do this in many different places as you see fit.
+
+# default load of CMS
+
+If you do not want the dashboard to load by default, then you can change the code below.
 
 ```yml
 SilverStripe\Admin\AdminRootController:
-  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+    default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
 ```

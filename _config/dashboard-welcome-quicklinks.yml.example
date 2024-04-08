@@ -1,0 +1,11 @@
+
+---
+Name: dashboard_welcome_quicklinks_custom
+After:
+  - '#dashboard_welcome_quicklinks'
+---
+SilverStripe\Admin\AdminRootController:
+  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+
+Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
+    use_default_dashboard_provider: false

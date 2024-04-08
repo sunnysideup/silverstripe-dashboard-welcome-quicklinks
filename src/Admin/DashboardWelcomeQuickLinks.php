@@ -8,6 +8,8 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
@@ -39,22 +41,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $this->updateFormWithQuicklinks($form);
 
         return $form;
-    }
-
-    /**
-     * Only show first element, as the profile form is limited to editing
-     * the current member it doesn't make much sense to show the member name
-     * in the breadcrumbs.
-     *
-     * @param bool $unlinked
-     *
-     * @return ArrayList
-     */
-    public function Breadcrumbs($unlinked = false)
-    {
-        $items = parent::Breadcrumbs($unlinked);
-
-        return new ArrayList([$items[0]]);
     }
 
     public function updateFormWithQuicklinks($form)
@@ -100,6 +86,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['Script'] ?? '',
                         $entry['Style'] ?? '',
                         $entry['IconClass'] ?? '',
+                        $entry['Target'] ?? '',
                     )->Field();
                 }
                 $html .= '</div>';
@@ -152,7 +139,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         return $array;
     }
 
-    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass = '')
+    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass = '', ?string $target = '')
     {
         $name = preg_replace('#[\W_]+#u', '', (string) $title);
         $html = '';
@@ -166,11 +153,14 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if (!empty($iconClass)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
+        if($target) {
+            $target = ' target="'.$target.'"';
+        }
         if ($link) {
             $html = '
             ' . $script . '
             <h2 style="' . $style . '">
-                ' . $icon . '<a href="' . $link . '" id="' . $name . '" target="_blank" ' . $onclick . '>' . $title . '</a>
+                ' . $icon . '<a href="' . $link . '" id="' . $name . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
             $html = '
@@ -188,5 +178,32 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $name,
             $html
         );
+    }
+    /**
+     * @return string
+     */
+    public function Title()
+    {
+        $app = $this->getApplicationName();
+        $siteConfigTitle = SiteConfig::current_site_config()->Title;
+        if($siteConfigTitle) {
+            $app = $siteConfigTitle . ' ('.$app.')';
+        }
+        return ($section = $this->SectionTitle()) ? sprintf('%s for %s', $section, $app) : $app;
+    }
+    /**
+     * @param bool $unlinked
+     * @return ArrayList<ArrayData>
+     */
+    public function Breadcrumbs($unlinked = false)
+    {
+        $items = new ArrayList([
+            new ArrayData([
+                'Title' => $this->Title(),
+                'Link' => ($unlinked) ? false : $this->Link()
+            ])
+        ]);
+
+        return $items;
     }
 }
