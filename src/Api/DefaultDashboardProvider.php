@@ -32,7 +32,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $this->addFindPages();
         $this->addFilesAndImages();
         $this->addSiteConfigLinks();
-        $this->addSecurityLinks();
+        if(Permission::check('ADMIN')) {
+            $this->addSecurityLinks();
+        }
         $this->addModelAdminLinks();
         $this->addMeLinks();
         return $this->links;
@@ -128,6 +130,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         if(class_exists(EnabledMembers::class)) {
             $obj = Injector::inst()->get(EnabledMembers::class);
             $this->addLink('SECURITY', $this->phrase('review'). ' Multi-Factor Authentication Status', $obj->getLink());
+
         }
     }
 
@@ -147,46 +150,50 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         foreach($modelAdmins as $modelAdminClassName) {
             $groupAdded = false;
             $ma = Injector::inst()->get($modelAdminClassName);
-            $mas = $ma->getManagedModels();
-            if(count($mas)) {
-                $numberOfModels = count($mas);
-                $groupCode = strtoupper($modelAdminClassName);
-                $count = 0;
-                foreach($mas as $model => $title) {
-                    $count++;
-                    if($count > 7) {
-                        break;
-                    }
-                    if(is_array($title)) {
-                        $title = $title['title'];
-                        $model = $title['dataClass'] ?? $model;
-                    }
-                    if(! class_exists($model)) {
-                        continue;
-                    }
-                    if(! $groupAdded) {
-                        $this->addGroup($groupCode, $ma->menu_title(), 100);
-                        $groupAdded = true;
-                    }
-                    $obj = DataObject::singleton($model);
-                    $link = '';
-                    if($obj->hasMethod('CMSListLink')) {
-                        $link = $obj->CMSListLink();
-                    } else {
-                        $link = $ma->getLinkForModelTab($model);
-                    }
-                    $objectCount = $model::get()->count();
-                    $titleContainsObjectCount = strpos($title, ' ('.$objectCount.')');
-                    if($titleContainsObjectCount === false) {
-                        $title .= ' ('.$objectCount.')';
-                    }
-                    $this->addLink($groupCode, $this->phrase('edit'). ' '.$title, $link);
-                    if($numberOfModels < 4) {
+            if($ma->canView()) {
+                $mas = $ma->getManagedModels();
+                if(count($mas)) {
+                    $numberOfModels = count($mas);
+                    $groupCode = strtoupper($modelAdminClassName);
+                    $count = 0;
+                    foreach($mas as $model => $title) {
                         $obj = Injector::inst()->get($model);
-                        if($obj->canCreate()) {
-                            $classNameEscaped = str_replace('\\', '-', $model);
-                            $linkNew = $link .= '/EditForm/field/'.$classNameEscaped.'/item/new';
-                            $this->addLink($groupCode, $this->phrase('add'). ' '.$obj->i18n_singular_name(), $linkNew);
+                        if($obj && $obj->canView()) {
+                            $count++;
+                            if($count > 7) {
+                                break;
+                            }
+                            if(is_array($title)) {
+                                $title = $title['title'];
+                                $model = $title['dataClass'] ?? $model;
+                            }
+                            if(! class_exists($model)) {
+                                continue;
+                            }
+                            if(! $groupAdded) {
+                                $this->addGroup($groupCode, $ma->menu_title(), 100);
+                                $groupAdded = true;
+                            }
+                            $link = '';
+                            if($obj->hasMethod('CMSListLink')) {
+                                $link = $obj->CMSListLink();
+                            } else {
+                                $link = $ma->getLinkForModelTab($model);
+                            }
+                            $objectCount = $model::get()->count();
+                            $titleContainsObjectCount = strpos($title, ' ('.$objectCount.')');
+                            if($titleContainsObjectCount === false) {
+                                $title .= ' ('.$objectCount.')';
+                            }
+                            $this->addLink($groupCode, $this->phrase('edit'). ' '.$title, $link);
+                            if($numberOfModels < 4) {
+                                $obj = Injector::inst()->get($model);
+                                if($obj->canCreate()) {
+                                    $classNameEscaped = str_replace('\\', '-', $model);
+                                    $linkNew = $link .= '/EditForm/field/'.$classNameEscaped.'/item/new';
+                                    $this->addLink($groupCode, $this->phrase('add'). ' '.$obj->i18n_singular_name(), $linkNew);
+                                }
+                            }
                         }
                     }
                 }
