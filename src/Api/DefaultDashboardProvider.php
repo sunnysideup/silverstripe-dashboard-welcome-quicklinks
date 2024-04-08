@@ -157,19 +157,19 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     $groupCode = strtoupper($modelAdminClassName);
                     $count = 0;
                     foreach($mas as $model => $title) {
+                        $count++;
+                        if($count > 7) {
+                            break;
+                        }
+                        if(is_array($title)) {
+                            $title = $title['title'];
+                            $model = $title['dataClass'] ?? $model;
+                        }
+                        if(! class_exists($model)) {
+                            continue;
+                        }
                         $obj = Injector::inst()->get($model);
                         if($obj && $obj->canView()) {
-                            $count++;
-                            if($count > 7) {
-                                break;
-                            }
-                            if(is_array($title)) {
-                                $title = $title['title'];
-                                $model = $title['dataClass'] ?? $model;
-                            }
-                            if(! class_exists($model)) {
-                                continue;
-                            }
                             if(! $groupAdded) {
                                 $this->addGroup($groupCode, $ma->menu_title(), 100);
                                 $groupAdded = true;
