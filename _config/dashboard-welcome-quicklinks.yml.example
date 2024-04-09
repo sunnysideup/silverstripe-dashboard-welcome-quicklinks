@@ -8,4 +8,10 @@ SilverStripe\Admin\AdminRootController:
   default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
 
 Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
-    use_default_dashboard_provider: false
+  use_default_dashboard_provider: false
+
+Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider:
+  model_admins_to_skip:
+    - MyModelAdminToSkip
+  pages_to_skip:
+    - MyPageToSkip

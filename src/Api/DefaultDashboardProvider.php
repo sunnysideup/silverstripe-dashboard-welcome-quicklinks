@@ -40,9 +40,16 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         return $this->links;
     }
 
+
     private static $new_phrase = '+';
     private static $review_phrase = '☑';
     private static $edit_phrase = '✎';
+    private static $model_admins_to_skip = [
+        ArchiveAdmin::class,
+    ];
+    private static $pages_to_skip = [
+
+    ];
 
 
     protected function addPagesLinks()
@@ -70,7 +77,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $this->addGroup('PAGEFILTER', 'Page Types ('.count($pages).')', 300);
         $count = 0;
         foreach($pages as $pageClassName) {
-            $pageCount = $pageClassName::get()->count();
+            $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
             if($pageCount < 1) {
                 continue;
             }
@@ -81,7 +88,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             }
             $page = Injector::inst()->get($pageClassName);
             $pageTitle = $page->i18n_singular_name();
-            $query = urlencode('q[ClassName]='.$pageClassName);
+            $query = 'q[ClassName]='.$pageClassName;
             $link = 'admin/pages?' . $query;
             $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
         }
@@ -141,8 +148,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addModelAdminLinks()
     {
         $modelAdmins = [];
+        $skips = (array) $this->Config()->get('model_admins_to_skip');
         foreach (ClassInfo::subclassesFor(ModelAdmin::class, false) as $className) {
-            if($className === ArchiveAdmin::class) {
+            if(in_array($className, $skips)) {
                 continue;
             }
             $modelAdmins[$className] = $className;

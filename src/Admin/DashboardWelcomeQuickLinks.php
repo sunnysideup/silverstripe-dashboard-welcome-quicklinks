@@ -153,9 +153,10 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if (!empty($iconClass)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
-        if($target) {
-            $target = ' target="'.$target.'"';
+        if(!$target) {
+            $target = '_self';
         }
+        $target = ' target="'.$target.'"';
         if ($link) {
             $html = '
             ' . $script . '
