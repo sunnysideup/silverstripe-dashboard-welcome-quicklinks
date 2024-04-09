@@ -91,12 +91,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 $this->addLink('PAGEFILTER', $this->phrase('more'), '/admin/pages');
                 break;
             }
-            if($pageCount < 2) {
+            if($pageCount === 1) {
                 $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
                 $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                 continue;
             }
-
             $page = Injector::inst()->get($pageClassName);
             $pageTitle = $page->i18n_singular_name();
             $query = 'q[ClassName]='.$pageClassName;
@@ -195,13 +194,19 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                 $this->addGroup($groupCode, $ma->menu_title(), 100);
                                 $groupAdded = true;
                             }
+                            $objectCount = $model::get()->filter(['ClassName' => $model])->count();
+                            if($objectCount === 1) {
+                                $obj = DataObject::get_one($model, ['ClassName' => $model]);
+                                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                continue;
+                            }
+
                             $link = '';
                             if($obj->hasMethod('CMSListLink')) {
                                 $link = $obj->CMSListLink();
                             } else {
                                 $link = $ma->getLinkForModelTab($model);
                             }
-                            $objectCount = $model::get()->count();
                             $titleContainsObjectCount = strpos($title, ' ('.$objectCount.')');
                             if($titleContainsObjectCount === false) {
                                 $title .= ' ('.$objectCount.')';
