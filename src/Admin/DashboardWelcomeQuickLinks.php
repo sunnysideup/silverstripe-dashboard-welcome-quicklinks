@@ -29,6 +29,31 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static $menu_priority = 99999;
 
+    private static $colour_options = [
+        '#F2F3F4',
+        '#222222',
+        '#F3C300',
+        '#875692',
+        '#F38400',
+        '#A1CAF1',
+        '#BE0032',
+        '#C2B280',
+        '#848482',
+        '#008856',
+        '#E68FAC',
+        '#0067A5',
+        '#F99379',
+        '#604E97',
+        '#F6A600',
+        '#B3446C',
+        '#DCD300',
+        '#882D17',
+        '#8DB600',
+        '#654522',
+        '#E25822',
+        '#2B3D26',
+    ];
+
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
@@ -68,7 +93,10 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 }
                 $html .= '
                 <div class="grid-cell" ' . $colour . '>
-                    <h1>' . $icon . '' . ($groupDetails['Title'] ?? $groupCode) . '</h1>';
+                    <div class="header">
+                    <h1>' . $icon . '' . ($groupDetails['Title'] ?? $groupCode) . '</h1>
+                    </div>
+                    <div class="entries">';
                 $items = $groupDetails['Items'] ?? [];
                 if (!empty($entry['Link']) && class_exists($entry['Link'])) {
                     $obj = Injector::inst()->get($entry['Link']);
@@ -89,14 +117,14 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['Target'] ?? '',
                     )->Field();
                 }
-                $html .= '</div>';
+                $html .= '</div></div>';
             }
         }
-        $kc = ['#F2F3F4', '#222222', '#F3C300', '#875692', '#F38400', '#A1CAF1', '#BE0032', '#C2B280', '#848482', '#008856', '#E68FAC', '#0067A5', '#F99379', '#604E97', '#F6A600', '#B3446C', '#DCD300', '#882D17', '#8DB600', '#654522', '#E25822', '#2B3D26'];
+        $kc = $this->Config()->get('colour_options');
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {
-            $colours .= ' .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') {background-color: ' . $colour . '55;}';
+            $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: '.$this->getFontColor($colour).'!important;}';
         }
         $html .= '</div>';
         $html .= '<style>
@@ -107,19 +135,48 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
           grid-gap: 20px;
         }
 
-        .grid-cell {
+        .grid-wrapper .grid-cell {
           max-width: 500px;
-          padding: 20px;
           font-size: 150%;
           border-radius: 1rem;
-          border: 1px dashed #004e7f55;
+          border: 1px solid #004e7f55;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+          opacity: 0.8;
+          &:hover {
+              transform: scale(1.05);
+              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+              opacity: 1;
+          }
+        }
+        .grid-wrapper .grid-cell > div {
+            padding: 20px;
+        }
+        .grid-wrapper .grid-cell > div.header {
+            padding-bottom: 0;
+            border-bottom: 1px solid #004e7f55;
+        }
+        .grid-wrapper .grid-cell > div.header h1 {
+            font-weight: 700;
+            font-size: 1.3rem!important;
+        }
+        .grid-wrapper .grid-cell > div.entries {
+            background-color: #fff;
+            height: 100%;
         }
         ' . $colours . '
-        .grid-cell * {
-            color: #222!important;
+        .grid-wrapper .grid-cell div.entries *,
+        .grid-wrapper .grid-cell div.entries a:link,
+        .grid-wrapper .grid-cell div.entries a:visited {
+            color: #222;
         }
-        .grid-cell h1 {
-            border-bottom: 1px solid #777
+        .grid-wrapper .grid-cell div.entries a:link:hover,
+        .grid-wrapper .grid-cell div.entries a:visited:hover {
+            color: #0071c4;
+            text-decoration: none;
         }
         </style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
@@ -207,4 +264,18 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
         return $items;
     }
+    protected function getFontColor(string $backgroundColor): string
+    {
+        // Convert hex color to RGB
+        $r = hexdec(substr($backgroundColor, 1, 2));
+        $g = hexdec(substr($backgroundColor, 3, 2));
+        $b = hexdec(substr($backgroundColor, 5, 2));
+
+        // Calculate luminance
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+        // If luminance is greater than 0.5, use black font; otherwise, use white
+        return $luminance > 0.5 ? '#222' : '#fff';
+    }
+
 }

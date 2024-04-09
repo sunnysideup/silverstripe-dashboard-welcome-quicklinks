@@ -41,9 +41,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     }
 
 
-    private static $new_phrase = '+';
+    private static $add_phrase = '+';
     private static $review_phrase = '☑';
     private static $edit_phrase = '✎';
+    private static $more_phrase = '... More';
     private static $model_admins_to_skip = [
         ArchiveAdmin::class,
     ];
@@ -87,9 +88,15 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             }
             $count++;
             if($count > 7) {
-                $this->addLink('PAGEFILTER', 'More ...', '/admin/pages');
+                $this->addLink('PAGEFILTER', $this->phrase('more'), '/admin/pages');
                 break;
             }
+            if($pageCount < 2) {
+                $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
+                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                continue;
+            }
+
             $page = Injector::inst()->get($pageClassName);
             $pageTitle = $page->i18n_singular_name();
             $query = 'q[ClassName]='.$pageClassName;
@@ -172,7 +179,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     foreach($mas as $model => $title) {
                         $count++;
                         if($count > 7) {
-                            $this->addLink('PAGEFILTER', 'More ...', $ma->Link());
+                            $this->addLink('PAGEFILTER', $this->phrase('more'), $ma->Link());
                             break;
                         }
                         if(is_array($title)) {
@@ -244,13 +251,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
 
     protected function phrase(string $phrase): string
     {
-        if($phrase === 'add') {
-            $phrase = $this->config()->get('new_phrase');
-        } elseif($phrase === 'review') {
-            $phrase = $this->config()->get('review_phrase');
-        } elseif($phrase === 'edit') {
-            $phrase = $this->config()->get('edit_phrase');
-        }
+        $phrase = $this->config()->get($phrase .'_phrase');
         return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
     }
 
