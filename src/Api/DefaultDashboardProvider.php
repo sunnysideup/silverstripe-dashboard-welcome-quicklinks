@@ -70,7 +70,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addFindPages()
     {
         $pages = [];
+        $pagesToSkip = (array) $this->Config()->get('pages_to_skip');
         foreach (ClassInfo::subclassesFor(SiteTree::class, false) as $className) {
+            if(in_array($className, $pagesToSkip)) {
+                continue;
+            }
             $pages[$className] = $className;
 
         }
