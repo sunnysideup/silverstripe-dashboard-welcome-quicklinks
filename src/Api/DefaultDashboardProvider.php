@@ -75,7 +75,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 continue;
             }
             $count++;
-            if($count > 12) {
+            if($count > 7) {
+                $this->addLink('PAGEFILTER', 'More ...', '/admin/pages');
                 break;
             }
             $page = Injector::inst()->get($pageClassName);
@@ -159,6 +160,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     foreach($mas as $model => $title) {
                         $count++;
                         if($count > 7) {
+                            $this->addLink('PAGEFILTER', 'More ...', $ma->Link());
                             break;
                         }
                         if(is_array($title)) {
