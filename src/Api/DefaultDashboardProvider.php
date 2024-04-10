@@ -177,16 +177,17 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     $count = 0;
                     foreach($mas as $model => $title) {
                         $count++;
-                        if($count > 7) {
-                            $this->addLink('PAGEFILTER', $this->phrase('more'), $ma->Link());
-                            break;
-                        }
+
                         if(is_array($title)) {
                             $title = $title['title'];
                             $model = $title['dataClass'] ?? $model;
                         }
                         if(! class_exists($model)) {
                             continue;
+                        }
+                        if($count > 7) {
+                            $this->addLink($groupCode, $this->phrase('more'), $ma->Link());
+                            break;
                         }
                         $obj = Injector::inst()->get($model);
                         if($obj && $obj->canView()) {
@@ -197,7 +198,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $objectCount = $model::get()->filter(['ClassName' => $model])->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
-                                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                 continue;
                             }
 
@@ -257,6 +258,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function phrase(string $phrase): string
     {
         $phrase = $this->config()->get($phrase .'_phrase');
+        if(!$phrase) {
+            $phrase = 'NOT SET: '.$phrase;
+        }
         return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
     }
 
