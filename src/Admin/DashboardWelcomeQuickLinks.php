@@ -29,7 +29,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static $menu_priority = 99999;
 
-    private static $colour_options = [
+    private static $colour_options = [];
+
+    private static $default_colour_options = [
         '#F2F3F4',
         '#222222',
         '#F3C300',
@@ -121,6 +123,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             }
         }
         $kc = (array) $this->Config()->get('colour_options');
+        if(empty($kc)) {
+            $kc = $this->Config()->get('default_colour_options');
+        }
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {

@@ -9,6 +9,12 @@ SilverStripe\Admin\AdminRootController:
 
 Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
   use_default_dashboard_provider: false
+  # make sure to use quotes with colours because of #
+  colour_options:
+    - '#223344'
+    - '#883344'
+    - '#773344'
+
 
 Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider:
   model_admins_to_skip:
