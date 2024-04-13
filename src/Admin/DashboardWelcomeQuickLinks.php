@@ -120,7 +120,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 $html .= '</div></div>';
             }
         }
-        $kc = $this->Config()->get('colour_options');
+        $kc = (array) $this->Config()->get('colour_options');
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {
