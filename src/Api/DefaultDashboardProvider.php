@@ -178,7 +178,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     foreach($mas as $model => $title) {
                         $count++;
                         if($count > 7) {
-                            $this->addLink('PAGEFILTER', $this->phrase('more'), $ma->Link());
+                            $this->addLink($groupCode, $this->phrase('more'), $ma->Link());
                             break;
                         }
                         if(is_array($title)) {
@@ -197,7 +197,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $objectCount = $model::get()->filter(['ClassName' => $model])->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
-                                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                 continue;
                             }
 
@@ -233,7 +233,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     {
         $this->addGroup('ME', 'My Account', 200);
         $this->addLink('ME', $this->phrase('edit') . '  My Details (there is just one of you!)', '/admin/myprofile');
-        $this->addLink('ME', $this->phrase('review') . '  Test Password Reset', 'Security/lostpassword');
+        $this->addLink('ME', $this->phrase('review') . '  Password Reset (Test Email)', 'Security/lostpassword');
         $this->addLink('ME', $this->phrase('review') . '  Log-out', '/Security/logout');
     }
 
