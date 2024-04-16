@@ -21,7 +21,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 {
     private static $url_segment = 'go';
 
-    private static $use_default_dashboard = true;
+    private static $use_default_dashboard_provider = true;
 
     private static $menu_title = 'Quick-links';
 
@@ -190,10 +190,10 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     protected function getLinksFromImplementor()
     {
         $array = [];
-        $useDefaultDashboard = $this->config()->get('use_default_dashboard');
+        $useDefaultDashboard = $this->config()->get('use_default_dashboard_provider');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
         foreach ($classNames as $className) {
-            if($useDefaultDashboard === false && $className === DefaultDashboardProvider::class) {
+            if((bool) $useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
