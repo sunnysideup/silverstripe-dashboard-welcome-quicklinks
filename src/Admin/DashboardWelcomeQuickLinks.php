@@ -159,6 +159,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         }
         .grid-wrapper .grid-cell > div {
             padding: 20px;
+            padding-bottom: 0;
         }
         .grid-wrapper .grid-cell > div.header {
             padding-bottom: 0;
