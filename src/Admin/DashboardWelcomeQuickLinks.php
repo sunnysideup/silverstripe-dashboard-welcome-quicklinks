@@ -181,7 +181,7 @@ JS;
         .grid-wrapper .grid-cell {
           max-width: 500px;
           font-size: 150%;
-          border-radius: 1rem;
+          border-radius: 0.4rem;
           border: 1px solid #004e7f55;
           display: flex;
           flex-direction: column;
@@ -189,11 +189,11 @@ JS;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           transition: all 0.3s ease;
           opacity: 0.8;
-          &:hover {
-              transform: scale(1.05);
-              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-              opacity: 1;
-          }
+        }
+        .grid-wrapper .grid-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 1;
         }
         .grid-wrapper .grid-cell > div {
             padding: 20px;
@@ -202,6 +202,7 @@ JS;
         .grid-wrapper .grid-cell > div.header {
             padding-bottom: 0;
             border-bottom: 1px solid #004e7f55;
+            filter: saturate(0.7)
         }
         .grid-wrapper .grid-cell > div.header h1 {
             font-weight: 700;
@@ -232,7 +233,7 @@ JS;
         $useDefaultDashboard = (bool) $this->config()->get('use_default_dashboard_provider');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
         foreach ($classNames as $className) {
-            if($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class && 1 === 2) {
+            if($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
