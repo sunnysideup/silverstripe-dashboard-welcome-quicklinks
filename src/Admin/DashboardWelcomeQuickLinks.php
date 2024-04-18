@@ -142,7 +142,8 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 // Create the input box
                 const inputBox = document.createElement('input');
                 inputBox.type = 'text';
-                inputBox.placeholder = 'Type to filter...';
+                inputBox.placeholder = 'Type to filter quick-links...';
+                inputBox.classList.add('no-change-track')
 
                 // Append the input box to the target span
                 targetSpan.appendChild(inputBox);
@@ -164,6 +165,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
                 // Add event listener to the input box to filter as the user types
                 inputBox.addEventListener('input', filterGridCells);
+
             }
             window.setTimeout(setupInputAndFilter, 500);
         </script>
@@ -195,6 +197,9 @@ JS;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             opacity: 1;
         }
+        .grid-wrapper .grid-cell:hover .header {
+            filter: saturate(1);
+        }
         .grid-wrapper .grid-cell > div {
             padding: 20px;
             padding-bottom: 0;
@@ -202,7 +207,7 @@ JS;
         .grid-wrapper .grid-cell > div.header {
             padding-bottom: 0;
             border-bottom: 1px solid #004e7f55;
-            filter: saturate(0.7)
+            filter: saturate(0.67);
         }
         .grid-wrapper .grid-cell > div.header h1 {
             font-weight: 700;

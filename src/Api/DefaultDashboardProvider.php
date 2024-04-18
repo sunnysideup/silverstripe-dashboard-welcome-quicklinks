@@ -234,7 +234,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addMeLinks()
     {
         $this->addGroup('ME', 'My Account', 200);
-        $this->addLink('ME', $this->phrase('edit') . '  My Details (there is just one of you!)', '/admin/myprofile');
+        $this->addLink('ME', $this->phrase('edit') . '  My Details', '/admin/myprofile');
         $this->addLink('ME', $this->phrase('review') . '  Test Password Reset', 'Security/lostpassword');
         $this->addLink('ME', $this->phrase('review') . '  Log-out', '/Security/logout');
     }
