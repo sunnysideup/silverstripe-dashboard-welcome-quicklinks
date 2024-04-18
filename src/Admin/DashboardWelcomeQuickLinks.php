@@ -144,6 +144,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 inputBox.type = 'text';
                 inputBox.placeholder = 'Type to filter quick-links...';
                 inputBox.classList.add('no-change-track')
+                inputBox.classList.add('quick-links-filter')
 
                 // Append the input box to the target span
                 targetSpan.appendChild(inputBox);
@@ -227,6 +228,9 @@ JS;
         .grid-wrapper .grid-cell div.entries a:visited:hover {
             color: #0071c4;
             text-decoration: none;
+        }
+        .quick-links-filter {
+            padding: 0.4rem;
         }
         </style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
