@@ -229,10 +229,10 @@ JS;
     protected function getLinksFromImplementor()
     {
         $array = [];
-        $useDefaultDashboard = (bool) $this->config()->get('use_default_dashboard_provider');
+        $useDefaultDashboard = $this->config()->get('use_default_dashboard_provider');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
         foreach ($classNames as $className) {
-            if($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class && 1 === 2) {
+            if((bool) $useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
