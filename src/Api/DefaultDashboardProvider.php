@@ -7,6 +7,8 @@ use SilverStripe\Assets\File;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Upload;
+use SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages;
+use SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
@@ -58,7 +60,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $this->addGroup('PAGES', 'Pages', 10);
         $this->addLink('PAGES', $this->phrase('add'). ' Page', '/admin/pages/add');
         $pagesCount = DataObject::get('Page')->count();
+        $draftCount = CMSSiteTreeFilter_StatusDraftPages::create()->getFilteredPages()->count();
+        $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages()->count();
         $this->addLink('PAGES', $this->phrase('edit'). ' Pages ('.$pagesCount.')', '/admin/pages');
+        $this->addLink('PAGES', $this->phrase('edit'). ' Unpublished Drafts ('.$draftCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
+        $this->addLink('PAGES', $this->phrase('edit'). ' Unpublished Changes ('.$revisedCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
         $pageLastEdited = DataObject::get_one('Page', '', true, 'LastEdited DESC');
         if ($pageLastEdited) {
             $this->addLink('PAGES', '✎ Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
