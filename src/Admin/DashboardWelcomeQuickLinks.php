@@ -31,7 +31,34 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static $colour_options = [];
 
+
     private static $default_colour_options = [
+        '#B71C1C',
+        '#880E4F',
+        '#4A148C',
+        '#311B92',
+        '#1A237E',
+        '#0D47A1',
+        '#01579B',
+        '#006064',
+        '#004D40',
+        '#1B5E20',
+        '#33691E',
+        '#827717',
+        '#F57F17',
+        '#FF6F00',
+        '#E65100',
+        '#BF360C',
+        '#3E2723',
+        '#212121'
+    ];
+
+    /**
+     * easy to distinguish colours
+     *
+     * @var array
+     */
+    private static $default_colour_options1 = [
         '#F2F3F4',
         '#222222',
         '#F3C300',
@@ -56,27 +83,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         '#2B3D26',
     ];
 
-    private static $default_colour_options2 = [
-        '#B71C1C',
-        '#880E4F',
-        '#4A148C',
-        '#311B92',
-        '#1A237E',
-        '#0D47A1',
-        '#01579B',
-        '#006064',
-        '#004D40',
-        '#1B5E20',
-        '#33691E',
-        '#827717',
-        '#F57F17',
-        '#FF6F00',
-        '#E65100',
-        '#BF360C',
-        '#3E2723',
-        '#212121'
-    ];
 
+    /**
+     * light colours
+     *
+     * @var array
+     */
     private static $default_colour_options3 = [
         '#FFEBEE',
         '#FCE4EC',
