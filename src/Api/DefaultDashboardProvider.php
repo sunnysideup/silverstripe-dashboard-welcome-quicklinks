@@ -200,7 +200,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                 $this->addGroup($groupCode, $ma->menu_title(), 100);
                                 $groupAdded = true;
                             }
-                            $objectCount = $model::get()->filter(['ClassName' => $model])->count();
+                            // $classNameList = ClassInfo::subclassesFor($model);
+                            $objectCount = $model::get()->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
                                 if($obj->hasMethod('CMSEditLink')) {
@@ -212,7 +213,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $link = '';
                             if($obj->hasMethod('CMSListLink')) {
                                 $link = $obj->CMSListLink();
-                            } else {
+                            } if(! $link) {
                                 $link = $ma->getLinkForModelTab($model);
                             }
                             $titleContainsObjectCount = strpos($title, ' ('.$objectCount.')');
@@ -254,11 +255,12 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         ];
     }
 
-    protected function addLink($groupCode, $title, $link)
+    protected function addLink($groupCode, $title, $link, ?bool $hide = false)
     {
         $this->links[$groupCode]['Items'][] = [
             'Title' => $title,
             'Link' => $link,
+            'Style' => $hide ? 'display: none;' : '',
         ];
     }
 

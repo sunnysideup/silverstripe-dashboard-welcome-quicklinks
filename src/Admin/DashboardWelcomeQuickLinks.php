@@ -33,11 +33,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
 
     private static $default_colour_options = [
-        '#B71C1C',
-        '#880E4F',
-        '#4A148C',
-        '#311B92',
-        '#1A237E',
         '#0D47A1',
         '#01579B',
         '#006064',
@@ -50,7 +45,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         '#E65100',
         '#BF360C',
         '#3E2723',
-        '#212121'
+        '#212121',
+        '#B71C1C',
+        '#880E4F',
+        '#4A148C',
+        '#311B92',
+        '#1A237E',
     ];
 
     /**
@@ -331,9 +331,9 @@ JS;
         } else {
             $html = '
             ' . $script . '
-            <p>
-                &raquo; ' . $title . '
-            </p>
+            <h2>
+                ' . $title . '
+            </h2>
             ';
         }
         if ($style) {
