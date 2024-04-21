@@ -46,7 +46,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     private static $add_phrase = '+';
     private static $review_phrase = '☑';
     private static $edit_phrase = '✎';
-    private static $more_phrase = '... More';
     private static $model_admins_to_skip = [
         ArchiveAdmin::class,
     ];
@@ -93,10 +92,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 continue;
             }
             $count++;
-            if($count > 7) {
-                $this->addLink('PAGEFILTER', $this->phrase('more'), '/admin/pages');
-                break;
-            }
             if($pageCount === 1) {
                 $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
                 $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name(), $obj->CMSEditLink());
@@ -190,10 +185,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                         if(! class_exists($model)) {
                             continue;
                         }
-                        if($count > 7) {
-                            $this->addLink($groupCode, $this->phrase('more'), $ma->Link());
-                            break;
-                        }
                         $obj = Injector::inst()->get($model);
                         if($obj && $obj->canView()) {
                             if(! $groupAdded) {
@@ -255,12 +246,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         ];
     }
 
-    protected function addLink($groupCode, $title, $link, ?bool $hide = false)
+    protected function addLink($groupCode, $title, $link)
     {
         $this->links[$groupCode]['Items'][] = [
             'Title' => $title,
             'Link' => $link,
-            'Style' => $hide ? 'display: none;' : '',
         ];
     }
 

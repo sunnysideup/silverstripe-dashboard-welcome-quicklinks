@@ -30,6 +30,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static $menu_priority = 99999;
 
     private static $colour_options = [];
+    private static $max_shortcuts_per_group = 7;
+
+    private static $more_phrase = '... More';
 
 
     private static $default_colour_options = [
@@ -128,6 +131,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     {
         $shortcuts = $this->getLinksFromImplementor();
         $html = '';
+        $max = $this->Config()->get('max_shortcuts_per_group');
         if (count($shortcuts)) {
             $html = '<div class="grid-wrapper">';
 
@@ -162,13 +166,15 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['Link'] = $obj->Link();
                     }
                 }
-                foreach ($items as $entry) {
+                foreach ($items as $count => $entry) {
+                    $entry['Class'] = $entry['Class'] ?? '';
+                    $entry['Class'] = ($count > $max) ? ' more-item' : '';
                     $html .= $this->makeShortCut(
                         (string) $entry['Title'],
                         (string) $entry['Link'],
                         $entry['OnClick'] ?? '',
                         $entry['Script'] ?? '',
-                        $entry['Style'] ?? '',
+                        $entry['Class'] ?? '',
                         $entry['IconClass'] ?? '',
                         $entry['Target'] ?? '',
                     )->Field();
@@ -186,47 +192,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: '.$this->getFontColor($colour).'!important;}';
         }
         $html .= '</div>';
-        $html .= <<<JS
-        <script>
-            // Function to add the input box and set up the filtering behavior
-            function setupInputAndFilter() {
-                // Locate the target span element
-                const targetSpan = document.querySelector('.cms-content-header-info');
-
-                // Create the input box
-                const inputBox = document.createElement('input');
-                inputBox.type = 'text';
-                inputBox.placeholder = 'Type to filter quick-links...';
-                inputBox.classList.add('no-change-track')
-                inputBox.classList.add('quick-links-filter')
-
-                // Append the input box to the target span
-                targetSpan.appendChild(inputBox);
-
-                // Function to filter grid cells based on input
-                function filterGridCells() {
-                    const inputValue = inputBox.value.toLowerCase();
-                    const gridCells = document.querySelectorAll('div.grid-cell');
-
-                    gridCells.forEach(cell => {
-                        // Check if the text in the cell includes the input value
-                        if (inputValue === '' || cell.textContent.toLowerCase().includes(inputValue)) {
-                            cell.style.display = ''; // Show the cell
-                        } else {
-                            cell.style.display = 'none'; // Hide the cell
-                        }
-                    });
-                }
-
-                // Add event listener to the input box to filter as the user types
-                inputBox.addEventListener('input', filterGridCells);
-
-            }
-            window.setTimeout(setupInputAndFilter, 500);
-        </script>
-
-JS;
-
+        $html .= '<script>window.setTimeout(dashboardWelcomeQuickLinksSetupInputAndFilter, 500)</script>';
         $html .= '<style>' . $colours . '</style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
     }
@@ -245,7 +211,7 @@ JS;
         return $array;
     }
 
-    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $style = '', ?string $iconClass = '', ?string $target = '')
+    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $class = '', ?string $iconClass = '', ?string $target = '')
     {
         $name = preg_replace('#[\W_]+#u', '', (string) $title);
         $html = '';
@@ -266,7 +232,7 @@ JS;
         if ($link) {
             $html = '
             ' . $script . '
-            <h2 style="' . $style . '">
+            <h2 class="' . $class . '">
                 ' . $icon . '<a href="' . $link . '" id="' . $name . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
@@ -276,9 +242,6 @@ JS;
                 ' . $title . '
             </h2>
             ';
-        }
-        if ($style) {
-            $html .= '<style>' . $style . '</style>';
         }
 
         return LiteralField::create(

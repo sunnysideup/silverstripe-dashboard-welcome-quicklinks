@@ -9,7 +9,7 @@ However, if you do not want the default ones, you can turn it off like this:
 
 ```yml
 Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
-    use_default_dashboard_provider: false
+  use_default_dashboard_provider: false
 ```
 
 You can add your own classes that implement the `DashboardProviderInterface` interface.
@@ -33,7 +33,7 @@ These classes should then have the following method:
                             'Link' => 'https://docs.silverstripe.org',
                             'OnClick' => 'alert("Are you sure?")',
                             'Script' => '',
-                            'Style' => '',
+                            'Class' => 'more-item', // more item means that it is hidden by default
                             'IconClass' => 'font-icon-p-virtual',
                             'Target' => '_blank',
                         ],
@@ -61,5 +61,5 @@ If you do not want the dashboard to load by default, then you can change the cod
 
 ```yml
 SilverStripe\Admin\AdminRootController:
-    default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
 ```
