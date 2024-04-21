@@ -167,8 +167,15 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     }
                 }
                 foreach ($items as $count => $entry) {
+                    if($count === $max) {
+                        $html .= $this->makeShortCut(
+                            $this->Config()->get('more_phrase'),
+                            '#',
+                            'more-item-link',
+                        )->Field();
+                    }
                     $entry['Class'] = $entry['Class'] ?? '';
-                    $entry['Class'] = ($count > $max) ? ' more-item' : '';
+                    $entry['Class'] .= ($count > $max) ? ' more-item' : '';
                     $html .= $this->makeShortCut(
                         (string) $entry['Title'],
                         (string) $entry['Link'],

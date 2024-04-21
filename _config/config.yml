@@ -8,4 +8,4 @@ SilverStripe\Admin\AdminRootController:
 
 SilverStripe\Framework\LeftAndMain:
   extra_requirements_css:
-    - 'sunnysideup/dashboard-welcome-quicklinks:client/dist/dashboard.css'
+    - 'sunnysideup/dashboard-welcome-quicklinks:client/dist/dashboardss.css'

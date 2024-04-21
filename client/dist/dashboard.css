@@ -53,3 +53,6 @@
 .DashboardWelcomeQuicklinks .quick-links-filter {
     padding: 0.4rem;
 }
+.DashboardWelcomeQuicklinks .more-item {
+    display: none;
+}
