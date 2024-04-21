@@ -1,0 +1,55 @@
+.grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(300px, 1fr) );;
+  grid-gap: 20px;
+}
+.grid-wrapper .grid-cell {
+  max-width: 500px;
+  font-size: 150%;
+  border-radius: 0.4rem;
+  border: 1px solid #004e7f55;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+.grid-wrapper .grid-cell:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+}
+.grid-wrapper .grid-cell:hover .header {
+    filter: saturate(1);
+}
+.grid-wrapper .grid-cell > div {
+    padding: 20px;
+    padding-bottom: 0;
+}
+.grid-wrapper .grid-cell > div.header {
+    padding-bottom: 0;
+    border-bottom: 1px solid #004e7f55;
+    filter: saturate(0.67);
+}
+.grid-wrapper .grid-cell > div.header h1 {
+    font-weight: 700;
+    font-size: 1.3rem!important;
+}
+.grid-wrapper .grid-cell > div.entries {
+    background-color: #fff;
+    height: 100%;
+}
+.grid-wrapper .grid-cell div.entries *,
+.grid-wrapper .grid-cell div.entries a:link,
+.grid-wrapper .grid-cell div.entries a:visited {
+    color: #222;
+}
+.grid-wrapper .grid-cell div.entries a:link:hover,
+.grid-wrapper .grid-cell div.entries a:visited:hover {
+    color: #0071c4;
+    text-decoration: none;
+}
+.quick-links-filter {
+    padding: 0.4rem;
+}

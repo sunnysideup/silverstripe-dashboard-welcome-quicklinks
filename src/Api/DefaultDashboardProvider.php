@@ -69,9 +69,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         if ($pageLastEdited) {
             $this->addLink('PAGES', '✎ Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
         }
-        $this->addLink('PAGES', $this->phrase('review'). ' Page Reports', '/admin/reports');
         $lastWeekLink = '/admin/pages?'.'q[LastEditedFrom]='.date('Y-m-d', strtotime('-1 week'));
         $this->addLink('PAGES', $this->phrase('review'). ' Recently Modified Pages', $lastWeekLink);
+        $this->addLink('PAGES', $this->phrase('review'). ' Page Reports', '/admin/reports');
     }
 
     protected function addFindPages()
