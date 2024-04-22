@@ -53,6 +53,10 @@
 }
 .DashboardWelcomeQuicklinks .quick-links-filter {
     padding: 0.4rem;
+    border: 1px solid #ced5e1;
+    border-radius: 3px;
+    min-width: 230px;
+    margin-right: 3px;
 }
 .DashboardWelcomeQuicklinks .more-item {
     display: none;
