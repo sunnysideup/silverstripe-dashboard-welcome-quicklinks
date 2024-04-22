@@ -6,8 +6,8 @@ After:
 SilverStripe\Admin\AdminRootController:
   default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
 
-SilverStripe\Framework\LeftAndMain:
+SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'sunnysideup/dashboard-welcome-quicklinks:client/dist/dashboard.css'
-  extra_requirements_js:
-    - 'sunnysideup/dashboard-welcome-quicklinks:client/dist/dashboard.js'
+    - 'sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.css'
+  extra_requirements_javascript:
+    - 'sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.js'
