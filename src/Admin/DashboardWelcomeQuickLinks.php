@@ -167,13 +167,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     }
                 }
                 foreach ($items as $count => $entry) {
-                    if($count === $max) {
-                        $html .= $this->makeShortCut(
-                            $this->Config()->get('more_phrase'),
-                            '#',
-                            'more-item-link',
-                        )->Field();
-                    }
                     $entry['Class'] = $entry['Class'] ?? '';
                     $entry['Class'] .= ($count > $max) ? ' more-item' : '';
                     $html .= $this->makeShortCut(
@@ -185,6 +178,15 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['IconClass'] ?? '',
                         $entry['Target'] ?? '',
                     )->Field();
+                    if($count > $max && count($items) == $count + 1) {
+                        $html .= $this->makeShortCut(
+                            $this->Config()->get('more_phrase'),
+                            '#', // link
+                            'dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore(event); return false;', // onclick
+                            '', // script
+                            'more-item-more', //class
+                        )->Field();
+                    }
                 }
                 $html .= '</div></div>';
             }
@@ -240,7 +242,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $html = '
             ' . $script . '
             <h2 class="' . $class . '">
-                ' . $icon . '<a href="' . $link . '" id="' . $name . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>
+                ' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>
             </h2>';
         } else {
             $html = '
