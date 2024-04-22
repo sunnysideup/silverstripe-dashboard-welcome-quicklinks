@@ -39,15 +39,12 @@ function dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore (event) {
   event.preventDefault()
   const link = event.target
   const siblingsAll = link.parentNode.parentNode.children
-  console.log(siblingsAll)
   const siblings = Array.from(siblingsAll).filter(child =>
     child.classList.contains('more-item')
   )
-  console.log(siblings)
   const areHidden = siblings.some(
     sibling => sibling.style.display === 'none' || !sibling.style.display
   )
-  console.log(areHidden)
 
   siblings.forEach(sibling => {
     sibling.style.display = areHidden ? 'block' : 'none'
