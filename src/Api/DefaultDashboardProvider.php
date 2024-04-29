@@ -76,6 +76,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addFindPages()
     {
         $pages = [];
+        $notUsedArray = [];
         $pagesToSkip = (array) $this->Config()->get('pages_to_skip');
         foreach (ClassInfo::subclassesFor(SiteTree::class, false) as $className) {
             if(in_array($className, $pagesToSkip)) {
@@ -89,6 +90,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         foreach($pages as $pageClassName) {
             $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
             if($pageCount < 1) {
+                $notUsedArray[$pageClassName] = $pageClassName::singleton()->i18n_singular_name();
                 continue;
             }
             $count++;
@@ -102,6 +104,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             $query = 'q[ClassName]='.$pageClassName;
             $link = 'admin/pages?' . $query;
             $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
+        }
+        foreach($notUsedArray as $pageClassName => $pageTitle) {
+            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' (0)', 'admin/pages/add?PageType='.$pageClassName);
         }
     }
     protected function addFilesAndImages()
@@ -196,7 +201,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
                                 if($obj->hasMethod('CMSEditLink')) {
-                                    $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                    $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                     continue;
                                 }
                             }

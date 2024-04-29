@@ -130,6 +130,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     public function updateFormWithQuicklinks($form)
     {
         $shortcuts = $this->getLinksFromImplementor();
+        // print_r($shortcuts);
         $html = '';
         $max = $this->Config()->get('max_shortcuts_per_group');
         if (count($shortcuts)) {
