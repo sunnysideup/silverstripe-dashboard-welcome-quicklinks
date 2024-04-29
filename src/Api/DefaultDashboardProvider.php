@@ -96,11 +96,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             $count++;
             if($pageCount === 1) {
                 $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
-                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name() . ' (1)', $obj->CMSEditLink());
                 continue;
             }
             $page = Injector::inst()->get($pageClassName);
-            $pageTitle = $page->i18n_singular_name();
+            $pageTitle = $page->i18n_plural_name();
             $query = 'q[ClassName]='.$pageClassName;
             $link = 'admin/pages?' . $query;
             $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
