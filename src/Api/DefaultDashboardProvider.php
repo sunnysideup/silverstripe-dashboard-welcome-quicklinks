@@ -200,7 +200,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $objectCount = $model::get()->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
-                                if($obj->hasMethod('CMSEditLink')) {
+                                if(! $obj) {
+                                    $obj = DataObject::get_one($model);
+                                }
+                                if($obj && $obj->hasMethod('CMSEditLink')) {
                                     $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                     continue;
                                 }
