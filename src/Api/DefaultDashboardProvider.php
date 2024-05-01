@@ -197,7 +197,13 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                 $groupAdded = true;
                             }
                             // $classNameList = ClassInfo::subclassesFor($model);
-                            $objectCount = $model::get()->count();
+                            $ma = ReflectionHelper::allowAccessToProperty(get_class($ma), 'modelClass');
+                            $ma->modelClass = $model;
+                            $list = $ma->getList();
+                            if(! $list) {
+                                $list = $model::get();
+                            }
+                            $objectCount = $list->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
                                 if(! $obj) {
@@ -267,5 +273,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $phrase = $this->config()->get($phrase .'_phrase');
         return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
     }
+
 
 }
