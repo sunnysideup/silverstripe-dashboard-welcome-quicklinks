@@ -19,7 +19,7 @@ class ReflectionHelper
      *
      * @param string $className
      * @param string $propertyName
-     * @return object object of the classname provded
+     * @return object object of the classname provided
      */
     public static function allowAccessToProperty(string $className, string $propertyName)
     {
