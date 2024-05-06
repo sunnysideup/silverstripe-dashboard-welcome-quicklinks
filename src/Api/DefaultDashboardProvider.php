@@ -76,6 +76,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addFindPages()
     {
         $pages = [];
+        $notUsedArray = [];
         $pagesToSkip = (array) $this->Config()->get('pages_to_skip');
         foreach (ClassInfo::subclassesFor(SiteTree::class, false) as $className) {
             if(in_array($className, $pagesToSkip)) {
@@ -89,19 +90,23 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         foreach($pages as $pageClassName) {
             $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
             if($pageCount < 1) {
+                $notUsedArray[$pageClassName] = $pageClassName::singleton()->i18n_singular_name();
                 continue;
             }
             $count++;
             if($pageCount === 1) {
                 $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
-                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name() . ' (1)', $obj->CMSEditLink());
                 continue;
             }
             $page = Injector::inst()->get($pageClassName);
-            $pageTitle = $page->i18n_singular_name();
+            $pageTitle = $page->i18n_plural_name();
             $query = 'q[ClassName]='.$pageClassName;
             $link = 'admin/pages?' . $query;
             $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
+        }
+        foreach($notUsedArray as $pageClassName => $pageTitle) {
+            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' (0)', 'admin/pages/add?PageType='.$pageClassName);
         }
     }
     protected function addFilesAndImages()
@@ -192,11 +197,20 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                 $groupAdded = true;
                             }
                             // $classNameList = ClassInfo::subclassesFor($model);
-                            $objectCount = $model::get()->count();
+                            $ma = ReflectionHelper::allowAccessToProperty(get_class($ma), 'modelClass');
+                            $ma->modelClass = $model;
+                            $list = $ma->getList();
+                            if(! $list) {
+                                $list = $model::get();
+                            }
+                            $objectCount = $list->count();
                             if($objectCount === 1) {
                                 $obj = DataObject::get_one($model, ['ClassName' => $model]);
-                                if($obj->hasMethod('CMSEditLink')) {
-                                    $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                if(! $obj) {
+                                    $obj = DataObject::get_one($model);
+                                }
+                                if($obj && $obj->hasMethod('CMSEditLink')) {
+                                    $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                     continue;
                                 }
                             }
@@ -263,5 +277,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $phrase = $this->config()->get($phrase .'_phrase');
         return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
     }
+
 
 }
