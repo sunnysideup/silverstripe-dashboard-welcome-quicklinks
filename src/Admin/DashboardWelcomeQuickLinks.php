@@ -4,6 +4,7 @@ namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
@@ -19,9 +20,47 @@ use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinks
  */
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
-    private static $url_segment = 'go';
+    protected static int $item_counter = 0;
+    protected static int $group_counter = 0;
+    protected static array $links = [];
 
-    private static $use_default_dashboard_provider = true;
+
+    public static function add_group(string $groupCode, string $title, ?int $sort = 0)
+    {
+        self::$group_counter++;
+
+        self::$links[$groupCode] = [
+            'Title' => $title,
+            'SortOrder' => $sort ?: self::$group_counter,
+        ];
+    }
+
+    public static function add_link(string $groupCode, string $title, string $link)
+    {
+        self::$item_counter++;
+        self::$links[$groupCode]['Items'][] = [
+            'Title' => $title,
+            'Link' => $link,
+        ];
+    }
+
+    public static function get_links()
+    {
+        return self::$links;
+    }
+
+    public static function get_base_phrase(string $phrase): string
+    {
+        $phrase = Config::inst()->get(static::class, $phrase .'_phrase');
+        return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
+    }
+
+    private static string $add_phrase = '+';
+    private static string $review_phrase = '☑';
+    private static string $edit_phrase = '✎';
+    private static string $url_segment = 'go';
+
+    private static bool $use_default_dashboard_provider = true;
 
     private static $menu_title = 'Quick-links';
 

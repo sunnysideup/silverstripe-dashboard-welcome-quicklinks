@@ -21,12 +21,12 @@ use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\VersionedAdmin\ArchiveAdmin;
+use Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
 class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
 {
     use Configurable;
-    protected $links = [];
 
     public function provideDashboardWelcomeQuickLinks(): array
     {
@@ -39,13 +39,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         }
         $this->addModelAdminLinks();
         $this->addMeLinks();
-        return $this->links;
+        return DashboardWelcomeQuicklinks::get_links();
     }
 
 
-    private static $add_phrase = '+';
-    private static $review_phrase = '☑';
-    private static $edit_phrase = '✎';
     private static $model_admins_to_skip = [
         ArchiveAdmin::class,
     ];
@@ -56,21 +53,21 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
 
     protected function addPagesLinks()
     {
-        $this->addGroup('PAGES', 'Pages', 10);
-        $this->addLink('PAGES', $this->phrase('add'). ' Page', '/admin/pages/add');
+        DashboardWelcomeQuicklinks::add_group('PAGES', 'Pages', 10);
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('add'). ' Page', '/admin/pages/add');
         $pagesCount = DataObject::get('Page')->count();
         $draftCount = CMSSiteTreeFilter_StatusDraftPages::create()->getFilteredPages()->count();
         $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages()->count();
-        $this->addLink('PAGES', $this->phrase('edit'). ' Pages ('.$pagesCount.')', '/admin/pages');
-        $this->addLink('PAGES', $this->phrase('edit'). ' Unpublished Drafts ('.$draftCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
-        $this->addLink('PAGES', $this->phrase('edit'). ' Unpublished Changes ('.$revisedCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' Pages ('.$pagesCount.')', '/admin/pages');
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' Unpublished Drafts ('.$draftCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' Unpublished Changes ('.$revisedCount.')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
         $pageLastEdited = DataObject::get_one('Page', '', true, 'LastEdited DESC');
         if ($pageLastEdited) {
-            $this->addLink('PAGES', '✎ Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
+            DashboardWelcomeQuicklinks::add_link('PAGES', '✎ Last Edited Page: '.$pageLastEdited->Title, $pageLastEdited->CMSEditLink());
         }
         $lastWeekLink = '/admin/pages?'.'q[LastEditedFrom]='.date('Y-m-d', strtotime('-1 week'));
-        $this->addLink('PAGES', $this->phrase('review'). ' Recently Modified Pages', $lastWeekLink);
-        $this->addLink('PAGES', $this->phrase('review'). ' Page Reports', '/admin/reports');
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Recently Modified Pages', $lastWeekLink);
+        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Page Reports', '/admin/reports');
     }
 
     protected function addFindPages()
@@ -85,7 +82,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             $pages[$className] = $className;
 
         }
-        $this->addGroup('PAGEFILTER', 'Page Types ('.count($pages).')', 300);
+        DashboardWelcomeQuicklinks::add_group('PAGEFILTER', 'Page Types ('.count($pages).')', 300);
         $count = 0;
         foreach($pages as $pageClassName) {
             $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
@@ -96,64 +93,64 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             $count++;
             if($pageCount === 1) {
                 $obj = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
-                $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name() . ' (1)', $obj->CMSEditLink());
+                DashboardWelcomeQuicklinks::add_link('PAGEFILTER', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$pageClassName::singleton()->i18n_singular_name() . ' (1)', $obj->CMSEditLink());
                 continue;
             }
             $page = Injector::inst()->get($pageClassName);
             $pageTitle = $page->i18n_plural_name();
             $query = 'q[ClassName]='.$pageClassName;
             $link = 'admin/pages?' . $query;
-            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
+            DashboardWelcomeQuicklinks::add_link('PAGEFILTER', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$pageTitle.' ('.$pageCount.')', $link);
         }
         foreach($notUsedArray as $pageClassName => $pageTitle) {
-            $this->addLink('PAGEFILTER', $this->phrase('edit'). ' '.$pageTitle.' (0)', 'admin/pages/add?PageType='.$pageClassName);
+            DashboardWelcomeQuicklinks::add_link('PAGEFILTER', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$pageTitle.' (0)', 'admin/pages/add?PageType='.$pageClassName);
         }
     }
     protected function addFilesAndImages()
     {
         // 'Files ('.$filesCount.') and Images ('.$imageCount.')'
-        $this->addGroup('FILESANDIMAGES', 'Files and Images', 20);
+        DashboardWelcomeQuicklinks::add_group('FILESANDIMAGES', 'Files and Images', 20);
         $uploadFolderName = Config::inst()->get(Upload::class, 'uploads_folder');
         $uploadFolder = Folder::find_or_make($uploadFolderName);
         // all
-        $this->addLink('FILESANDIMAGES', $this->phrase('edit'). ' Open File Browswer', '/admin/assets');
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' Open File Browswer', '/admin/assets');
         // per type
         $filesCount = File::get()->exclude(['ClassName' => [Folder::class, Image::class]])->count();
         $imageCount = File::get()->filter(['ClassName' => [Image::class]])->count();
-        $this->addLink('FILESANDIMAGES', $this->phrase('review'). ' Images ('.$imageCount.')', 'admin/assets?filter[appCategory]=IMAGE');
-        $this->addLink('FILESANDIMAGES', $this->phrase('review'). ' Files ('.$filesCount.')', 'admin/assets?filter[appCategory]=DOCUMENT');
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Images ('.$imageCount.')', 'admin/assets?filter[appCategory]=IMAGE');
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Files ('.$filesCount.')', 'admin/assets?filter[appCategory]=DOCUMENT');
 
         // default upload folder
-        $this->addLink('FILESANDIMAGES', $this->phrase('review'). ' Open Default Upload Folder', $uploadFolder->CMSEditLink());
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Open Default Upload Folder', $uploadFolder->CMSEditLink());
 
         // recent
         $lastWeekLink = '/admin/assets?'.'filter[lastEditedFrom]='.date('Y-m-d', strtotime('-1 week')).'&view=tile';
-        $this->addLink('FILESANDIMAGES', $this->phrase('review'). ' Recently modified Files', $lastWeekLink);
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Recently modified Files', $lastWeekLink);
     }
 
     protected function addSiteConfigLinks()
     {
-        $this->addGroup('SITECONFIG', 'Site Wide Configuration', 20);
-        $this->addLink('SITECONFIG', $this->phrase('review'). ' Site Settings', '/admin/settings');
+        DashboardWelcomeQuicklinks::add_group('SITECONFIG', 'Site Wide Configuration', 20);
+        DashboardWelcomeQuicklinks::add_link('SITECONFIG', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Site Settings', '/admin/settings');
     }
 
     protected function addSecurityLinks()
     {
-        $this->addGroup('SECURITY', 'Security', 30);
-        $this->addLink('SECURITY', $this->phrase('add'). ' User', '/admin/security/users/EditForm/field/users/item/new');
+        DashboardWelcomeQuicklinks::add_group('SECURITY', 'Security', 30);
+        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('add'). ' User', '/admin/security/users/EditForm/field/users/item/new');
         $userCount = Member::get()->count();
         $groupCount = Group::get()->count();
-        $this->addLink('SECURITY', $this->phrase('review'). ' Users ('.$userCount.')', '/admin/security');
-        $this->addLink('SECURITY', $this->phrase('review'). ' Groups  ('.$groupCount.')', '/admin/security/groups');
+        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Users ('.$userCount.')', '/admin/security');
+        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Groups  ('.$groupCount.')', '/admin/security/groups');
         DefaultAdminService::singleton()->extend('addSecurityLinks', $this);
         $adminGroup = Permission::get_groups_by_permission('ADMIN')->first();
         if($adminGroup) {
             $userCount = $adminGroup->Members()->count();
-            $this->addLink('SECURITY', $this->phrase('review'). ' Administrators ('.$userCount.')', '/admin/security/groups/EditForm/field/groups/item/'.$adminGroup->ID.'/edit');
+            DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Administrators ('.$userCount.')', '/admin/security/groups/EditForm/field/groups/item/'.$adminGroup->ID.'/edit');
         }
         if(class_exists(EnabledMembers::class)) {
             $obj = Injector::inst()->get(EnabledMembers::class);
-            $this->addLink('SECURITY', $this->phrase('review'). ' Multi-Factor Authentication Status', $obj->getLink());
+            DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review'). ' Multi-Factor Authentication Status', $obj->getLink());
 
         }
     }
@@ -193,7 +190,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                         $obj = Injector::inst()->get($model);
                         if($obj && $obj->canView()) {
                             if(! $groupAdded) {
-                                $this->addGroup($groupCode, $ma->menu_title(), 100);
+                                DashboardWelcomeQuicklinks::add_group($groupCode, $ma->menu_title(), 100);
                                 $groupAdded = true;
                             }
                             // $classNameList = ClassInfo::subclassesFor($model);
@@ -210,7 +207,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                     $obj = DataObject::get_one($model);
                                 }
                                 if($obj && $obj->hasMethod('CMSEditLink')) {
-                                    $this->addLink($groupCode, $this->phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
+                                    DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
                                     continue;
                                 }
                             }
@@ -225,13 +222,13 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             if($titleContainsObjectCount === false) {
                                 $title .= ' ('.$objectCount.')';
                             }
-                            $this->addLink($groupCode, $this->phrase('edit'). ' '.$title, $link);
+                            DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$title, $link);
                             if($numberOfModels < 4) {
                                 $obj = Injector::inst()->get($model);
                                 if($obj->canCreate()) {
                                     $classNameEscaped = str_replace('\\', '-', $model);
                                     $linkNew = $link .= '/EditForm/field/'.$classNameEscaped.'/item/new';
-                                    $this->addLink($groupCode, $this->phrase('add'). ' '.$obj->i18n_singular_name(), $linkNew);
+                                    DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('add'). ' '.$obj->i18n_singular_name(), $linkNew);
                                 }
                             }
                         }
@@ -245,38 +242,13 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
 
     protected function addMeLinks()
     {
-        $this->addGroup('ME', 'My Account', 200);
-        $this->addLink('ME', $this->phrase('edit') . '  My Details', '/admin/myprofile');
-        $this->addLink('ME', $this->phrase('review') . '  Test Password Reset', 'Security/lostpassword');
-        $this->addLink('ME', $this->phrase('review') . '  Log-out', '/Security/logout');
+        DashboardWelcomeQuicklinks::add_group('ME', 'My Account', 200);
+        DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('edit') . '  My Details', '/admin/myprofile');
+        DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('review') . '  Test Password Reset', 'Security/lostpassword');
+        DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('review') . '  Log-out', '/Security/logout');
     }
 
 
-    protected function addGroup(string $groupCode, string $title, $sort)
-    {
-        $this->links[$groupCode] = [
-            'Title' => $title,
-            'SortOrdre' => $sort,
-        ];
-    }
-
-    protected static $item_counter = 0;
-
-    protected function addLink($groupCode, $title, $link)
-    {
-        self::$item_counter++;
-        $this->links[$groupCode]['Items'][] = [
-            'Title' => $title,
-            'Link' => $link,
-            'Sort' => 99999 + self::$item_counter,
-        ];
-    }
-
-    protected function phrase(string $phrase): string
-    {
-        $phrase = $this->config()->get($phrase .'_phrase');
-        return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
-    }
 
 
 }
