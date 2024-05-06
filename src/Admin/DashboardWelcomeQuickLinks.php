@@ -51,6 +51,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     public static function get_base_phrase(string $phrase): string
     {
+        if(!in_array($phrase, ['add', 'review', 'edit'])) {
+            user_error('Phrase must be one of "add", "review", or "edit"', E_USER_ERROR);
+        }
         $phrase = Config::inst()->get(static::class, $phrase .'_phrase');
         return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
     }
