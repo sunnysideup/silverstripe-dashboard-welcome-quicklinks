@@ -51,7 +51,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     public static function get_base_phrase(string $phrase): string
     {
-        if(!in_array($phrase, ['add', 'review', 'edit'])) {
+        if(!in_array($phrase, ['add', 'review', 'edit', 'more'])) {
             user_error('Phrase must be one of "add", "review", or "edit"', E_USER_ERROR);
         }
         $phrase = Config::inst()->get(static::class, $phrase .'_phrase');
@@ -62,6 +62,8 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static string $review_phrase = '☑';
     private static string $edit_phrase = '✎';
     private static string $url_segment = 'go';
+
+    private static $more_phrase = '... More';
 
     private static bool $use_default_dashboard_provider = true;
 
@@ -74,7 +76,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static $colour_options = [];
     private static $max_shortcuts_per_group = 7;
 
-    private static $more_phrase = '... More';
 
 
     private static $default_colour_options = [
@@ -223,7 +224,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     )->Field();
                     if($count > $max && count($items) == $count + 1) {
                         $html .= $this->makeShortCut(
-                            $this->Config()->get('more_phrase'),
+                            DashboardWelcomeQuicklinks::get_base_phrase('more'),
                             '#', // link
                             'dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore(event); return false;', // onclick
                             '', // script
