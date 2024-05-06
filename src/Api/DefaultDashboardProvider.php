@@ -246,11 +246,15 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         ];
     }
 
+    protected static $item_counter = 0;
+
     protected function addLink($groupCode, $title, $link)
     {
+        self::$item_counter++;
         $this->links[$groupCode]['Items'][] = [
             'Title' => $title,
             'Link' => $link,
+            'Sort' => 99999 + self::$item_counter,
         ];
     }
 
