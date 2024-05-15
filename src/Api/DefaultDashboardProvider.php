@@ -207,8 +207,11 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                     $obj = DataObject::get_one($model);
                                 }
                                 if($obj && $obj->hasMethod('CMSEditLink')) {
-                                    DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $obj->CMSEditLink());
-                                    continue;
+                                    $link = $obj->CMSEditLink();
+                                    if($link) {
+                                        DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit'). ' '.$model::singleton()->i18n_singular_name(), $link);
+                                        continue;
+                                    }
                                 }
                             }
 
