@@ -14,16 +14,13 @@ use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
-/**
- * Class \Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
- *
- */
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
     protected static int $item_counter = 0;
-    protected static int $group_counter = 0;
-    protected static array $links = [];
 
+    protected static int $group_counter = 0;
+
+    protected static array $links = [];
 
     public static function add_group(string $groupCode, string $title, ?int $sort = 0)
     {
@@ -51,16 +48,19 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     public static function get_base_phrase(string $phrase): string
     {
-        if(!in_array($phrase, ['add', 'review', 'edit', 'more'])) {
+        if (! in_array($phrase, ['add', 'review', 'edit', 'more'])) {
             user_error('Phrase must be one of "add", "review", or "edit"', E_USER_ERROR);
         }
-        $phrase = Config::inst()->get(static::class, $phrase .'_phrase');
-        return _t('DashboardWelcomeQuicklinks.'.$phrase, $phrase);
+        $phrase = Config::inst()->get(static::class, $phrase . '_phrase');
+        return _t('DashboardWelcomeQuicklinks.' . $phrase, $phrase);
     }
 
     private static string $add_phrase = '+';
+
     private static string $review_phrase = '☑';
+
     private static string $edit_phrase = '✎';
+
     private static string $url_segment = 'go';
 
     private static $more_phrase = '... More';
@@ -74,9 +74,8 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static $menu_priority = 99999;
 
     private static $colour_options = [];
+
     private static $max_shortcuts_per_group = 7;
-
-
 
     private static $default_colour_options = [
         '#0D47A1',
@@ -129,7 +128,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         '#2B3D26',
     ];
 
-
     /**
      * light colours
      *
@@ -153,7 +151,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         '#FFF3E0',
         '#FBE9E7',
         '#EFEBE9',
-        '#FAFAFA'
+        '#FAFAFA',
     ];
 
     public function getEditForm($id = null, $fields = null)
@@ -176,23 +174,24 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         // print_r($shortcuts);
         $html = '';
         $max = $this->Config()->get('max_shortcuts_per_group');
-        if (count($shortcuts)) {
+        if (count($shortcuts) > 0) {
             $html = '<div class="grid-wrapper">';
 
             usort(
                 $shortcuts,
                 function ($a, $b) {
-                    ($a['SortOrder'] ?? 0) <=> ($b['SortOrder'] ?? 0);
+                    $b['SortOrder'] ?? 0;
+                    $a['SortOrder'] ?? 0;
                 }
             );
 
             foreach ($shortcuts as $groupCode => $groupDetails) {
                 $colour = '';
-                if (!empty($groupDetails['Colour'])) {
+                if (! empty($groupDetails['Colour'])) {
                     $colour = 'style="background-color: ' . $groupDetails['Colour'] . '"';
                 }
                 $icon = '';
-                if (!empty($groupDetails['IconClass'])) {
+                if (! empty($groupDetails['IconClass'])) {
                     $icon = '<i class="' . $groupDetails['IconClass'] . '"></i> ';
                 }
                 $html .= '
@@ -202,7 +201,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     </div>
                     <div class="entries">';
                 $items = $groupDetails['Items'] ?? [];
-                if (!empty($entry['Link']) && class_exists($entry['Link'])) {
+                if (! empty($entry['Link']) && class_exists($entry['Link'])) {
                     $obj = Injector::inst()->get($entry['Link']);
                     if ($obj instanceof DataObject) {
                         $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
@@ -222,7 +221,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['IconClass'] ?? '',
                         $entry['Target'] ?? '',
                     )->Field();
-                    if($count > $max && count($items) == $count + 1) {
+                    if ($count > $max && count($items) == $count + 1) {
                         $html .= $this->makeShortCut(
                             DashboardWelcomeQuicklinks::get_base_phrase('more'),
                             '#', // link
@@ -236,13 +235,13 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             }
         }
         $kc = (array) $this->Config()->get('colour_options');
-        if(empty($kc)) {
+        if ($kc === []) {
             $kc = $this->Config()->get('default_colour_options');
         }
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {
-            $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: '.$this->getFontColor($colour).'!important;}';
+            $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: ' . $this->getFontColor($colour) . '!important;}';
         }
         $html .= '</div>';
         $html .= '<script>window.setTimeout(dashboardWelcomeQuickLinksSetupInputAndFilter, 500)</script>';
@@ -256,7 +255,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $useDefaultDashboard = (bool) $this->config()->get('use_default_dashboard_provider');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
         foreach ($classNames as $className) {
-            if($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
+            if ($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
@@ -266,7 +265,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $class = '', ?string $iconClass = '', ?string $target = '')
     {
-        $name = preg_replace('#[\W_]+#u', '', (string) $title);
+        $name = preg_replace('#[\W_]+#u', '', $title);
         $html = '';
         if ($onclick) {
             $onclick = ' onclick="' . $onclick . '"';
@@ -275,14 +274,14 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
-        if (!empty($iconClass)) {
+        if ($iconClass !== null && $iconClass !== '' && $iconClass !== '0') {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
-        if(!$target) {
+        if (! $target) {
             $target = '_self';
         }
-        $target = ' target="'.$target.'"';
-        if ($link) {
+        $target = ' target="' . $target . '"';
+        if ($link !== '' && $link !== '0') {
             $html = '
             ' . $script . '
             <h2 class="' . $class . '">
@@ -302,6 +301,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $html
         );
     }
+
     /**
      * @return string
      */
@@ -309,26 +309,26 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     {
         $app = $this->getApplicationName();
         $siteConfigTitle = SiteConfig::current_site_config()->Title;
-        if($siteConfigTitle) {
-            $app = $siteConfigTitle . ' ('.$app.')';
+        if ($siteConfigTitle) {
+            $app = $siteConfigTitle . ' (' . $app . ')';
         }
         return ($section = $this->SectionTitle()) ? sprintf('%s for %s', $section, $app) : $app;
     }
+
     /**
      * @param bool $unlinked
      * @return ArrayList<ArrayData>
      */
     public function Breadcrumbs($unlinked = false)
     {
-        $items = new ArrayList([
+        return new ArrayList([
             new ArrayData([
                 'Title' => $this->Title(),
-                'Link' => ($unlinked) ? false : $this->Link()
-            ])
+                'Link' => ($unlinked) ? false : $this->Link(),
+            ]),
         ]);
-
-        return $items;
     }
+
     protected function getFontColor(string $backgroundColor): string
     {
         // Convert hex color to RGB
@@ -342,5 +342,4 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         // If luminance is greater than 0.5, use black font; otherwise, use white
         return $luminance > 0.5 ? '#222' : '#fff';
     }
-
 }

@@ -17,8 +17,6 @@ class ReflectionHelper
     /**
      * returns a new instance of a class with the protected property available for changing.
      *
-     * @param string $className
-     * @param string $propertyName
      * @return object object of the classname provided
      */
     public static function allowAccessToProperty(string $className, string $propertyName)
