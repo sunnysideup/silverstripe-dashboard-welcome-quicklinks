@@ -196,7 +196,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             }
                             $objectCount = $list->count();
                             if ($objectCount === 1) {
-                                $obj = DataObject::get_one($model, ['ClassName' => $model]);
+                                $baseTable = Injector::inst()->get($model)->baseTable();
+                                $obj = DataObject::get_one($model, [$baseTable . '.ClassName' => $model]);
                                 if (! $obj) {
                                     $obj = DataObject::get_one($model);
                                 }
