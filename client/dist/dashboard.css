@@ -61,3 +61,6 @@
 .DashboardWelcomeQuicklinks .more-item {
     display: none;
 }
+.DashboardWelcomeQuicklinks .inside-link {
+  float: right;
+}

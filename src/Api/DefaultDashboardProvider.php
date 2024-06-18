@@ -53,11 +53,19 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addPagesLinks()
     {
         DashboardWelcomeQuicklinks::add_group('PAGES', 'Pages', 10);
-        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('add') . ' Page', '/admin/pages/add');
         $pagesCount = DataObject::get('Page')->count();
         $draftCount = CMSSiteTreeFilter_StatusDraftPages::create()->getFilteredPages()->count();
         $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages()->count();
-        DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Pages (' . $pagesCount . ')', '/admin/pages');
+        $add = [
+            'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
+            'Link' => '/admin/pages/add'
+        ];
+        DashboardWelcomeQuicklinks::add_link(
+            'PAGES',
+            DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Pages (' . $pagesCount . ')',
+            '/admin/pages',
+            $add
+        );
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Drafts (' . $draftCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Changes (' . $revisedCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
         $pageLastEdited = DataObject::get_one('Page', '', true, 'LastEdited DESC');
@@ -114,10 +122,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         // all
         DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Open File Browswer', '/admin/assets');
         // per type
-        $filesCount = File::get()->exclude(['ClassName' => [Folder::class, Image::class]])->count();
-        $imageCount = File::get()->filter(['ClassName' => [Image::class]])->count();
-        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Images (' . $imageCount . ')', 'admin/assets?filter[appCategory]=IMAGE');
+        $filesCount = File::get()->excludeAny(['ClassName' => [Folder::class, Image::class]])->count();
+        $imageCount = File::get()->filter(['ClassName' => Image::class])->exclude(['ClassName' => Folder::class])->count();
         DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Files (' . $filesCount . ')', 'admin/assets?filter[appCategory]=DOCUMENT');
+        DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Images (' . $imageCount . ')', 'admin/assets?filter[appCategory]=IMAGE');
 
         // default upload folder
         DashboardWelcomeQuicklinks::add_link('FILESANDIMAGES', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Open Default Upload Folder', $uploadFolder->CMSEditLink());
@@ -136,11 +144,19 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
     protected function addSecurityLinks()
     {
         DashboardWelcomeQuicklinks::add_group('SECURITY', 'Security', 30);
-        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('add') . ' User', '/admin/security/users/EditForm/field/users/item/new');
         $userCount = Member::get()->count();
         $groupCount = Group::get()->count();
-        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Users (' . $userCount . ')', '/admin/security');
-        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('review') . ' Groups  (' . $groupCount . ')', '/admin/security/groups');
+        $add = [
+            'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
+            'Link' => '/admin/security/users/EditForm/field/users/item/new'
+        ];
+        DashboardWelcomeQuicklinks::add_link(
+            'SECURITY',
+            DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Users (' . $userCount . ')',
+            '/admin/security',
+            $add
+        );
+        DashboardWelcomeQuicklinks::add_link('SECURITY', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Groups  (' . $groupCount . ')', '/admin/security/groups');
         DefaultAdminService::singleton()->extend('addSecurityLinks', $this);
         $adminGroup = Permission::get_groups_by_permission('ADMIN')->first();
         if ($adminGroup) {
@@ -220,15 +236,21 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             if ($titleContainsObjectCount === false) {
                                 $title .= ' (' . $objectCount . ')';
                             }
-                            DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' ' . $title, $link);
-                            if ($numberOfModels < 4) {
-                                $obj = Injector::inst()->get($model);
-                                if ($obj->canCreate()) {
-                                    $classNameEscaped = str_replace('\\', '-', $model);
-                                    $linkNew = $link .= '/EditForm/field/' . $classNameEscaped . '/item/new';
-                                    DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('add') . ' ' . $obj->i18n_singular_name(), $linkNew);
-                                }
+                            $add = [];
+                            if ($obj->canCreate()) {
+                                $classNameEscaped = str_replace('\\', '-', $model);
+                                $linkNew = $link .= '/EditForm/field/' . $classNameEscaped . '/item/new';
+                                $add = [
+                                    'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
+                                    'Link' => $linkNew
+                                ];
                             }
+                            DashboardWelcomeQuicklinks::add_link(
+                                $groupCode,
+                                DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' ' . $title,
+                                $link,
+                                $add
+                            );
                         }
                     }
                 }

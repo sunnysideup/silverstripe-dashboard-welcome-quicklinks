@@ -32,12 +32,17 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         ];
     }
 
-    public static function add_link(string $groupCode, string $title, string $link)
+    public static function add_link(string $groupCode, string $title, string $link, ?array $insideLink = [])
     {
         self::$item_counter++;
+        if (array_key_exists(0, $insideLink) && array_key_exists(1, $insideLink)) {
+            $keys = ['Title', 'Link'];
+            $insideLink = array_combine($keys, $insideLink);
+        }
         self::$links[$groupCode]['Items'][] = [
             'Title' => $title,
             'Link' => $link,
+            'InsideLink' => $insideLink,
         ];
     }
 
@@ -209,27 +214,8 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                         $entry['Link'] = $obj->Link();
                     }
                 }
-                foreach ($items as $count => $entry) {
-                    $entry['Class'] = $entry['Class'] ?? '';
-                    $entry['Class'] .= ($count > $max) ? ' more-item' : '';
-                    $html .= $this->makeShortCut(
-                        (string) $entry['Title'],
-                        (string) $entry['Link'],
-                        $entry['OnClick'] ?? '',
-                        $entry['Script'] ?? '',
-                        $entry['Class'] ?? '',
-                        $entry['IconClass'] ?? '',
-                        $entry['Target'] ?? '',
-                    )->Field();
-                    if ($count > $max && count($items) == $count + 1) {
-                        $html .= $this->makeShortCut(
-                            DashboardWelcomeQuicklinks::get_base_phrase('more'),
-                            '#', // link
-                            'dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore(event); return false;', // onclick
-                            '', // script
-                            'more-item-more', //class
-                        )->Field();
-                    }
+                foreach ($items as $pos => $entry) {
+                    $html .= $this->createInnerLink($entry, $pos, $items, $max);
                 }
                 $html .= '</div></div>';
             }
@@ -249,6 +235,25 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
     }
 
+    protected function createInnerLink($entry, $pos, $items, $max)
+    {
+        $html = '';
+        $entry['Class'] = $entry['Class'] ?? '';
+        $entry['Class'] .= ($pos > $max) ? ' more-item' : '';
+        $html .= $this->makeShortCut($entry)->Field();
+        if ($pos > $max && count($items) == $pos + 1) {
+            $html .= $this->makeShortCut(
+                [
+                    'Title' => DashboardWelcomeQuicklinks::get_base_phrase('more'),
+                    'Link' => '#',
+                    'OnClick' => 'dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore(event); return false;',
+                    'Class' => 'more-item-more',
+                ]
+            )->Field();
+        }
+        return $html;
+    }
+
     protected function getLinksFromImplementor()
     {
         $array = [];
@@ -263,8 +268,17 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         return $array;
     }
 
-    protected function makeShortCut(string $title, string $link, ?string $onclick = '', ?string $script = '', ?string $class = '', ?string $iconClass = '', ?string $target = '')
+    protected function makeShortCut(array $entry, ?bool $isInsideLink = false): LiteralField|string
     {
+        $title = (string) $entry['Title'];
+        $link = (string) $entry['Link'];
+        $onclick = (string) ($entry['OnClick'] ?? '');
+        $script = (string) ($entry['Script'] ?? '');
+        $class = (string) ($entry['Class'] ?? '');
+        $iconClass = (string) ($entry['IconClass'] ?? '');
+        $target = (string) ($entry['Target'] ?? '');
+        $insideLink = (array) ($entry['InsideLink'] ?? []);
+
         $name = preg_replace('#[\W_]+#u', '', $title);
         $html = '';
         if ($onclick) {
@@ -280,26 +294,32 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if (! $target) {
             $target = '_self';
         }
+        if($isInsideLink) {
+            $tag = 'span';
+        } else {
+            $tag = 'h2';
+        }
+        if($class) {
+            $class = ' class="'.$class.'"';
+        }
+        $insideLinkHTML = '';
+        if(!empty($insideLink)) {
+            $insideLink['Class'] = ($insideLink['Class'] ?? '').' inside-link';
+            $insideLinkHTML = $this->makeShortCut($insideLink, true);
+        }
         $target = ' target="' . $target . '"';
         if ($link !== '' && $link !== '0') {
-            $html = '
-            ' . $script . '
-            <h2 class="' . $class . '">
-                ' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>
-            </h2>';
+            $html = '' . $script . '<'.$tag.'' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>'.$insideLinkHTML .'</'.$tag.'>';
         } else {
-            $html = '
-            ' . $script . '
-            <h2>
-                ' . $title . '
-            </h2>
+            $html = '' . $script . '<'.$tag.'' . $class . '>' . $title . '' . $insideLinkHTML . '</'.$tag.'>
             ';
         }
-
-        return LiteralField::create(
-            $name,
-            $html
-        );
+        $html = preg_replace('/\s+/', ' ', $html);
+        if($isInsideLink) {
+            return $html;
+        } else {
+            return LiteralField::create($name, $html);
+        }
     }
 
     /**
