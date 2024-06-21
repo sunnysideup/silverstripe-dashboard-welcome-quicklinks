@@ -281,41 +281,37 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
         $name = preg_replace('#[\W_]+#u', '', $title);
         $html = '';
-        if ($onclick) {
+        if ($onclick !== '' && $onclick !== '0') {
             $onclick = ' onclick="' . $onclick . '"';
         }
-        if ($script) {
+        if ($script !== '' && $script !== '0') {
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
         if ($iconClass !== null && $iconClass !== '' && $iconClass !== '0') {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
-        if (! $target) {
+        if ($target === '' || $target === '0') {
             $target = '_self';
         }
-        if($isInsideLink) {
-            $tag = 'span';
-        } else {
-            $tag = 'h2';
-        }
-        if($class) {
-            $class = ' class="'.$class.'"';
+        $tag = $isInsideLink ? 'span' : 'h2';
+        if ($class !== '' && $class !== '0') {
+            $class = ' class="' . $class . '"';
         }
         $insideLinkHTML = '';
-        if(!empty($insideLink)) {
-            $insideLink['Class'] = ($insideLink['Class'] ?? '').' inside-link';
+        if ($insideLink !== []) {
+            $insideLink['Class'] = ($insideLink['Class'] ?? '') . ' inside-link';
             $insideLinkHTML = $this->makeShortCut($insideLink, true);
         }
         $target = ' target="' . $target . '"';
         if ($link !== '' && $link !== '0') {
-            $html = '' . $script . '<'.$tag.'' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>'.$insideLinkHTML .'</'.$tag.'>';
+            $html = '' . $script . '<' . $tag . '' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>' . $insideLinkHTML . '</' . $tag . '>';
         } else {
-            $html = '' . $script . '<'.$tag.'' . $class . '>' . $title . '' . $insideLinkHTML . '</'.$tag.'>
+            $html = '' . $script . '<' . $tag . '' . $class . '>' . $title . '' . $insideLinkHTML . '</' . $tag . '>
             ';
         }
         $html = preg_replace('/\s+/', ' ', $html);
-        if($isInsideLink) {
+        if ($isInsideLink) {
             return $html;
         } else {
             return LiteralField::create($name, $html);

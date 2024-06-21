@@ -59,7 +59,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages()->count();
         $add = [
             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
-            'Link' => '/admin/pages/add'
+            'Link' => '/admin/pages/add',
         ];
         DashboardWelcomeQuicklinks::add_link(
             'PAGES',
@@ -94,7 +94,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
             if ($pageCount < 1) {
                 $page = Injector::inst()->get($pageClassName);
-                if($page->canCreate()) {
+                if ($page->canCreate()) {
                     $pageTitle = $page->i18n_singular_name();
                     $pagesArray[] = [
                         'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add') . ' ' . $pageTitle . ' (0)',
@@ -105,10 +105,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 }
             } elseif ($pageCount === 1) {
                 $page = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
-                if($page->canEdit()) {
+                if ($page->canEdit()) {
                     $pageTitle = $page->i18n_singular_name();
                     $insideLink = [];
-                    if($page->canCreate()) {
+                    if ($page->canCreate()) {
                         $insideLink = [
                             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
                             'Link' => 'admin/pages/add?PageType=' . $pageClassName,
@@ -123,12 +123,12 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 }
             } else {
                 $page = Injector::inst()->get($pageClassName);
-                if($page->canEdit()) {
+                if ($page->canEdit()) {
                     $pageTitle = $page->i18n_plural_name();
                     $query = 'q[ClassName]=' . $pageClassName;
                     $link = 'admin/pages?' . $query;
                     $insideLink = [];
-                    if($page->canCreate()) {
+                    if ($page->canCreate()) {
                         $insideLink = [
                             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
                             'Link' => 'admin/pages/add?PageType=' . $pageClassName,
@@ -144,10 +144,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
             }
         }
         $pagesArray = $this->sortByCountAndTitle($pagesArray);
-        foreach($pagesArray as $pageClassName => $pageArray) {
+        foreach ($pagesArray as $pageArray) {
             DashboardWelcomeQuicklinks::add_link('PAGEFILTER', $pageArray['Title'], $pageArray['Link'], $pageArray['InsideLink']);
         }
-
     }
 
     protected function addFilesAndImages()
@@ -184,7 +183,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $userCount = Member::get()->count();
         $add = [
             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
-            'Link' => '/admin/security/users/EditForm/field/users/item/new'
+            'Link' => '/admin/security/users/EditForm/field/users/item/new',
         ];
         DashboardWelcomeQuicklinks::add_link(
             'SECURITY',
@@ -196,7 +195,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $groupCount = Group::get()->count();
         $add = [
             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
-            'Link' => '/admin/security/groups/EditForm/field/groups/item/new'
+            'Link' => '/admin/security/groups/EditForm/field/groups/item/new',
         ];
         DashboardWelcomeQuicklinks::add_link(
             'SECURITY',
@@ -215,7 +214,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         $roleCount = PermissionRole::get()->count();
         $add = [
             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
-            'Link' => '/admin/security/roles/EditForm/field/roles/item/new'
+            'Link' => '/admin/security/roles/EditForm/field/roles/item/new',
         ];
         DashboardWelcomeQuicklinks::add_link(
             'SECURITY',
@@ -303,7 +302,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                                 $linkNew = $link .= '/EditForm/field/' . $classNameEscaped . '/item/new';
                                 $add = [
                                     'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
-                                    'Link' => $linkNew
+                                    'Link' => $linkNew,
                                 ];
                             }
                             DashboardWelcomeQuicklinks::add_link(
