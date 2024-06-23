@@ -299,7 +299,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $add = [];
                             if ($obj->canCreate()) {
                                 $classNameEscaped = str_replace('\\', '-', $model);
-                                $linkNew = $link .= '/EditForm/field/' . $classNameEscaped . '/item/new';
+                                $linkNew = $link . '/EditForm/field/' . $classNameEscaped . '/item/new';
                                 $add = [
                                     'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
                                     'Link' => $linkNew,
