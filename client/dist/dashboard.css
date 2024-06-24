@@ -1,7 +1,6 @@
-
 .DashboardWelcomeQuicklinks .grid-wrapper {
   display: grid;
-  grid-template-columns: repeat( auto-fit, minmax(300px, 1fr) );;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-gap: 20px;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell {
@@ -17,53 +16,53 @@
   opacity: 0.8;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  opacity: 1;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell:hover .header {
-    filter: saturate(1);
+  filter: saturate(1);
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell > div {
-    padding: 20px;
-    padding-bottom: 0;
+  padding: 20px;
+  padding-bottom: 0;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell > div.header {
-    padding-bottom: 0;
-    border-bottom: 1px solid #004e7f55;
-    filter: saturate(0.67);
+  padding-bottom: 0;
+  border-bottom: 1px solid #004e7f55;
+  filter: saturate(0.67);
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell > div.header h1 {
-    font-weight: 700;
-    font-size: 1.4rem!important;
+  font-weight: 700;
+  font-size: 1.2rem !important;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell > div.entries h2 {
-  font-size: 1.4rem!important;
+  font-size: 1rem !important;
 }
 
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell > div.entries {
-    background-color: #fff;
-    height: 100%;
+  background-color: #fff;
+  height: 100%;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell div.entries *,
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell div.entries a:link,
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell div.entries a:visited {
-    color: #222;
+  color: #222;
 }
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell div.entries a:link:hover,
 .DashboardWelcomeQuicklinks .grid-wrapper .grid-cell div.entries a:visited:hover {
-    color: #0071c4;
-    text-decoration: none;
+  color: #0071c4;
+  text-decoration: none;
 }
 .DashboardWelcomeQuicklinks .quick-links-filter {
-    padding: 0.4rem;
-    border: 1px solid #ced5e1;
-    border-radius: 3px;
-    min-width: 230px;
-    margin-right: 3px;
+  padding: 0.4rem;
+  border: 1px solid #ced5e1;
+  border-radius: 3px;
+  min-width: 230px;
+  margin-right: 3px;
 }
 .DashboardWelcomeQuicklinks .more-item {
-    display: none;
+  display: none;
 }
 .DashboardWelcomeQuicklinks .inside-link {
   float: right;
