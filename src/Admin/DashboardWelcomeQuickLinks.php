@@ -219,6 +219,9 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 }
                 $html .= '</div></div>';
             }
+            $html .= '</div>';
+        } else {
+            $html .= '<p>Please start editing by making a selection from the left.</p>';
         }
         $kc = (array) $this->Config()->get('colour_options');
         if ($kc === []) {
@@ -229,7 +232,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         foreach ($kc as $key => $colour) {
             $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: ' . $this->getFontColor($colour) . '!important;}';
         }
-        $html .= '</div>';
         $html .= '<script>window.setTimeout(dashboardWelcomeQuickLinksSetupInputAndFilter, 500)</script>';
         $html .= '<style>' . $colours . '</style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
