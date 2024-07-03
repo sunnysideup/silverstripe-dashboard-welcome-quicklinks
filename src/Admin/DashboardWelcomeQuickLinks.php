@@ -68,7 +68,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static string $url_segment = 'go';
 
-    private static $more_phrase = '... More';
+    private static $more_phrase = '&raquo;';
 
     private static bool $use_default_dashboard_provider = true;
 

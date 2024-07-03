@@ -108,7 +108,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                 if ($page->canEdit()) {
                     $pageTitle = $page->i18n_singular_name();
                     $insideLink = [];
-                    if ($page->canCreate()) {
+                    if ($page->canCreate() && $page->config()->get('can_be_root')) {
                         $insideLink = [
                             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
                             'Link' => 'admin/pages/add?PageType=' . $pageClassName,
@@ -128,7 +128,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                     $query = 'q[ClassName]=' . $pageClassName;
                     $link = 'admin/pages?' . $query;
                     $insideLink = [];
-                    if ($page->canCreate()) {
+                    if ($page->canCreate() && $page->config()->get('can_be_root')) {
                         $insideLink = [
                             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
                             'Link' => 'admin/pages/add?PageType=' . $pageClassName,
