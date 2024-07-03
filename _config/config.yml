@@ -3,9 +3,6 @@ Name: dashboard_welcome_quicklinks
 After:
   - '#cmsdefaultadmin'
 ---
-SilverStripe\Admin\AdminRootController:
-  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
-
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - 'sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.css'

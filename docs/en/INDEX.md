@@ -57,7 +57,7 @@ You can do this in many different places as you see fit.
 
 # default load of CMS
 
-If you do not want the dashboard to load by default, then you can change the code below.
+If you would like the dashboard to load by default, then you can add the code below.
 
 ```yml
 SilverStripe\Admin\AdminRootController:
