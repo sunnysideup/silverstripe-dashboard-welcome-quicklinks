@@ -12,7 +12,7 @@ Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
   use_default_dashboard_provider: false
 ```
 
-You can add your own classes that implement the `DashboardProviderInterface` interface.
+You can add your own classes that implement the `DashboardWelcomeQuickLinksProvider` interface.
 
 These classes should then have the following method:
 
