@@ -1,7 +1,9 @@
 // Function to add the input box and set up the filtering behavior
 function dashboardWelcomeQuickLinksSetupInputAndFilter () {
   // Locate the target span element
-  const targetSpan = document.querySelector('.cms-content-header-info')
+  const targetSpan = document.querySelector(
+    '.cms-content-header-info .breadcrumbs-wrapper'
+  )
 
   // Create the input box
   const inputBox = document.createElement('input')
