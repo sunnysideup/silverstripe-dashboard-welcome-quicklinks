@@ -14,6 +14,8 @@ function dashboardWelcomeQuickLinksSetupInputAndFilter () {
 
   // Append the input box to the target span
   targetSpan.appendChild(inputBox)
+  targetSpan.style.display = 'flex'
+  targetSpan.style.justifyContent = 'space-between'
 
   // Function to filter grid cells based on input
   function filterGridCells () {
