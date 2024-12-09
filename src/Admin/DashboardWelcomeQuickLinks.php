@@ -14,6 +14,10 @@ use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
 
+/**
+ * Class \Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
+ *
+ */
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
     protected static int $item_counter = 0;
