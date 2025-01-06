@@ -26,6 +26,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     protected static array $links = [];
 
+
     public static function add_group(string $groupCode, string $title, ?int $sort = 0)
     {
         self::$group_counter++;
@@ -210,15 +211,15 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     </div>
                     <div class="entries">';
                 $items = $groupDetails['Items'] ?? [];
-                if (! empty($entry['Link']) && class_exists($entry['Link'])) {
-                    $obj = Injector::inst()->get($entry['Link']);
-                    if ($obj instanceof DataObject) {
-                        $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
-                    } else {
-                        $entry['Link'] = $obj->Link();
-                    }
-                }
                 foreach ($items as $pos => $entry) {
+                    if (! empty($entry['Link']) && class_exists($entry['Link'])) {
+                        $obj = Injector::inst()->get($entry['Link']);
+                        if ($obj instanceof DataObject) {
+                            $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
+                        } else {
+                            $entry['Link'] = $obj->Link();
+                        }
+                    }
                     $html .= $this->createInnerLink($entry, $pos, $items, $max);
                 }
                 $html .= '</div></div>';
