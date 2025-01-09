@@ -171,7 +171,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         // if ($form instanceof HTTPResponse) {
         //     return $form;
         // }
-        // $form->Fields()->removeByName('LastVisited');
 
         $this->updateFormWithQuicklinks($form);
 
