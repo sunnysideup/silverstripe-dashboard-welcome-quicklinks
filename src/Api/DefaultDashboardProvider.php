@@ -23,13 +23,13 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionRole;
 use SilverStripe\VersionedAdmin\ArchiveAdmin;
 use Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks;
-use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
+use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinksProvider;
 
-class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
+class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
 {
     use Configurable;
 
-    public function provideDashboardWelcomeQuickLinks(): array
+    public function provideDashboardWelcomeQuicklinks(): array
     {
         $this->addPagesLinks();
         $this->addFindPages();
@@ -47,9 +47,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
         ArchiveAdmin::class,
     ];
 
-    private static $pages_to_skip = [
-
-    ];
+    private static $pages_to_skip = [];
 
     protected function addPagesLinks()
     {
@@ -289,7 +287,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuickLinksProvider
                             $link = '';
                             if ($obj->hasMethod('CMSListLink')) {
                                 $link = $obj->CMSListLink();
-                            } if (! $link) {
+                            }
+                            if (! $link) {
                                 $link = $ma->getLinkForModelTab($model);
                             }
                             $titleContainsObjectCount = strpos($title, ' (' . $objectCount . ')');

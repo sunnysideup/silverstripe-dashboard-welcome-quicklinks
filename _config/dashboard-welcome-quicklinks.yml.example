@@ -5,7 +5,7 @@ After:
   - '#dashboard_welcome_quicklinks'
 ---
 SilverStripe\Admin\AdminRootController:
-  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
 
 Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
   use_default_dashboard_provider: false

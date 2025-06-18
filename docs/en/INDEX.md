@@ -12,13 +12,13 @@ Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks:
   use_default_dashboard_provider: false
 ```
 
-You can add your own classes that implement the `DashboardWelcomeQuickLinksProvider` interface.
+You can add your own classes that implement the `DashboardWelcomeQuicklinksProvider` interface.
 
 These classes should then have the following method:
 
 ```php
 
-    public function provideDashboardWelcomeQuickLinks() : array
+    public function provideDashboardWelcomeQuicklinks() : array
     {
         return
             [
@@ -61,5 +61,5 @@ If you would like the dashboard to load by default, then you can add the code be
 
 ```yml
 SilverStripe\Admin\AdminRootController:
-  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuickLinks
+  default_panel: Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
 ```

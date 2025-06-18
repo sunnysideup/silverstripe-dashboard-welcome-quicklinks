@@ -12,7 +12,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
-use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuickLinksProvider;
+use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinksProvider;
 
 /**
  * Class \Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
@@ -236,7 +236,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         foreach ($kc as $key => $colour) {
             $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: ' . $this->getFontColor($colour) . '!important;}';
         }
-        $html .= '<script>window.setTimeout(dashboardWelcomeQuickLinksSetupInputAndFilter, 500)</script>';
+        $html .= '<script>window.setTimeout(dashboardWelcomeQuicklinksSetupInputAndFilter, 500)</script>';
         $html .= '<style>' . $colours . '</style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
     }
@@ -252,7 +252,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 [
                     'Title' => DashboardWelcomeQuicklinks::get_base_phrase('more'),
                     'Link' => '#',
-                    'OnClick' => 'dashboardWelcomeQuickLinksSetupInputAndFilterToggleMore(event); return false;',
+                    'OnClick' => 'dashboardWelcomeQuicklinksSetupInputAndFilterToggleMore(event); return false;',
                     'Class' => 'more-item-more',
                 ]
             )->Field();
@@ -264,12 +264,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     {
         $array = [];
         $useDefaultDashboard = (bool) $this->config()->get('use_default_dashboard_provider');
-        $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuickLinksProvider::class);
+        $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuicklinksProvider::class);
         foreach ($classNames as $className) {
             if ($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
-            $array += Injector::inst()->get($className)->provideDashboardWelcomeQuickLinks();
+            $array += Injector::inst()->get($className)->provideDashboardWelcomeQuicklinks();
         }
         return $array;
     }
