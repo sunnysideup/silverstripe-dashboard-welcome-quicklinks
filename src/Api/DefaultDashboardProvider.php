@@ -270,7 +270,14 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                             }
                             $objectCount = $list->count();
                             if ($objectCount === 1) {
-                                $obj = $list->first();
+                                $baseTable = Injector::inst()->get($model)->baseTable();
+                                $obj = DataObject::get_one($model, [$baseTable . '.ClassName' => $model]);
+                                if (! $obj) {
+                                    $obj = DataObject::get_one($model);
+                                }
+                                if (! $obj) {
+                                    $obj = $list->first();
+                                }
                                 if ($obj && $obj->hasMethod('CMSEditLink')) {
                                     $link = $obj->CMSEditLink();
                                     if ($link) {
