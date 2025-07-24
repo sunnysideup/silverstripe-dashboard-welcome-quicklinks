@@ -275,6 +275,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                                 if (! $obj) {
                                     $obj = DataObject::get_one($model);
                                 }
+                                if (! $obj) {
+                                    $obj = $list->first();
+                                }
                                 if ($obj && $obj->hasMethod('CMSEditLink')) {
                                     $link = $obj->CMSEditLink();
                                     if ($link) {
