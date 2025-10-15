@@ -86,7 +86,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
             }
             $pages[$className] = $className;
         }
-        DashboardWelcomeQuicklinks::add_group('PAGEFILTER', 'Page Types (' . count($pages) . ')', 300);
+        DashboardWelcomeQuicklinks::add_group('PAGEFILTER', 'Page Types', 300);
         $pagesArray = [];
         foreach ($pages as $pageClassName) {
             $pageCount = $pageClassName::get()->filter(['ClassName' => $pageClassName])->count();
