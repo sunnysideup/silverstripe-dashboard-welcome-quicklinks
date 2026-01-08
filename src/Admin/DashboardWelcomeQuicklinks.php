@@ -37,7 +37,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         ];
     }
 
-    public static function add_link(string $groupCode, string $title, string $link, ?array $insideLink = [])
+    public static function add_link(string $groupCode, string $title, string $link, ?array $insideLink = [], ?string $tooltip = null)
     {
         self::$item_counter++;
         if (array_key_exists(0, $insideLink) && array_key_exists(1, $insideLink)) {
@@ -48,6 +48,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             'Title' => $title,
             'Link' => $link,
             'InsideLink' => $insideLink,
+            'Tooltip' => $tooltip
         ];
     }
 
@@ -73,7 +74,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static string $url_segment = 'go';
 
-    private static $more_phrase = '&raquo;';
+    private static $more_phrase = '… &raquo;';
 
     private static bool $use_default_dashboard_provider = true;
 
@@ -85,7 +86,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static $colour_options = [];
 
-    private static $max_shortcuts_per_group = 7;
+    private static $max_shortcuts_per_group = 3;
 
     private static $default_colour_options = [
         '#0D47A1',
@@ -277,6 +278,10 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     protected function makeShortCut(array $entry, ?bool $isInsideLink = false): LiteralField|string
     {
         $title = (string) $entry['Title'];
+        $tooltip = (string) ($entry['Tooltip'] ?? '');
+        if ($title === '+') {
+            $tooltip = 'Add new item';
+        }
         $link = (string) $entry['Link'];
         $onclick = (string) ($entry['OnClick'] ?? '');
         $script = (string) ($entry['Script'] ?? '');
@@ -310,10 +315,13 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $insideLinkHTML = $this->makeShortCut($insideLink, true);
         }
         $target = ' target="' . $target . '"';
+        if ($tooltip !== '') {
+            $tooltip = 'title="' . htmlspecialchars($tooltip, ENT_QUOTES) . '"';
+        }
         if ($link !== '' && $link !== '0') {
-            $html = '' . $script . '<' . $tag . '' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . '>' . $title . '</a>' . $insideLinkHTML . '</' . $tag . '>';
+            $html = '' . $script . '<' . $tag . '' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . ' ' . $tooltip . '>' . $title . '</a>' . $insideLinkHTML . '</' . $tag . '>';
         } else {
-            $html = '' . $script . '<' . $tag . '' . $class . '>' . $title . '' . $insideLinkHTML . '</' . $tag . '>
+            $html = '' . $script . '<' . $tag . '' . $class . ' ' . $tooltip . '>' . $title . '' . $insideLinkHTML . '</' . $tag . '>
             ';
         }
         $html = preg_replace('/\s+/', ' ', $html);
