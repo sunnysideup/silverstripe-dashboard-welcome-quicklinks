@@ -299,7 +299,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
-        if ($iconClass !== null && $iconClass !== '' && $iconClass !== '0') {
+        if (!in_array($iconClass, [null, '', '0'], true)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
         if ($target === '' || $target === '0') {
