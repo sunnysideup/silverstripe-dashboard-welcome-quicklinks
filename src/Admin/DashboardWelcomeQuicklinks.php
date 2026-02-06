@@ -16,7 +16,6 @@ use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinks
 
 /**
  * Class \Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks
- *
  */
 class DashboardWelcomeQuicklinks extends LeftAndMain
 {
@@ -25,7 +24,6 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     protected static int $group_counter = 0;
 
     protected static array $links = [];
-
 
     public static function add_group(string $groupCode, string $title, ?int $sort = 0)
     {
@@ -48,7 +46,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             'Title' => $title,
             'Link' => $link,
             'InsideLink' => $insideLink,
-            'Tooltip' => $tooltip
+            'Tooltip' => $tooltip,
         ];
     }
 
@@ -299,7 +297,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $script = '<script>' . $script . '</script>';
         }
         $icon = '';
-        if (!in_array($iconClass, [null, '', '0'], true)) {
+        if (! in_array($iconClass, [null, '', '0'], true)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
         if ($target === '' || $target === '0') {
