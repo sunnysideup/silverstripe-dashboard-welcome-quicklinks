@@ -25,12 +25,23 @@ use SilverStripe\VersionedAdmin\ArchiveAdmin;
 use Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinksProvider;
 
+use Psr\SimpleCache\CacheInterface;
+use SilverStripe\Security\Security;
+
 class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
 {
     use Configurable;
 
     public function provideDashboardWelcomeQuicklinks(): array
     {
+        $cache = Injector::inst()->get(CacheInterface::class . '.dashboardQuicklinks');
+        $who = Security::getCurrentUser()->ID;
+        $cacheKey = 'quicklinks_' . $who;
+
+        if ($cache->has($cacheKey)) {
+            return $cache->get($cacheKey);
+        }
+
         $this->addPagesLinks();
         $this->addFindPages();
         $this->addFilesAndImages();
@@ -40,7 +51,12 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         }
         $this->addModelAdminLinks();
         $this->addMeLinks();
-        return DashboardWelcomeQuicklinks::get_links();
+        $this->addCacheLinks();
+
+        $links = DashboardWelcomeQuicklinks::get_links();
+        $cache->set($cacheKey, $links, 3600); // cache for 1 hour
+
+        return $links;
     }
 
     private static $model_admins_to_skip = [
@@ -326,6 +342,13 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('edit') . '  My Details', '/admin/myprofile');
         DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('review') . '  Test Password Reset', 'Security/lostpassword');
         DashboardWelcomeQuicklinks::add_link('ME', DashboardWelcomeQuicklinks::get_base_phrase('review') . '  Log-out', '/Security/logout');
+    }
+
+    protected function addCacheLinks()
+    {
+        DashboardWelcomeQuicklinks::add_group('CACHE', 'Cache', 300);
+        DashboardWelcomeQuicklinks::add_link('CACHE', DashboardWelcomeQuicklinks::get_base_phrase('clear') . '  Clear (most) Caches', '/dev/?flush=all');
+        DashboardWelcomeQuicklinks::add_link('CACHE', DashboardWelcomeQuicklinks::get_base_phrase('clear') . '  Check Database', '/dev/build?flush=all');
     }
 
     protected function sortByCountAndTitle(array $array): array

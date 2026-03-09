@@ -55,10 +55,13 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         return self::$links;
     }
 
+    private static array $action_types = ['add', 'review', 'edit', 'more', 'clear'];
+
     public static function get_base_phrase(string $phrase): string
     {
-        if (! in_array($phrase, ['add', 'review', 'edit', 'more'])) {
-            user_error('Phrase must be one of "add", "review", or "edit"', E_USER_ERROR);
+        $actionTypes = Config::inst()->get(static::class, 'action_types');
+        if (! in_array($phrase, $actionTypes, true)) {
+            user_error('Phrase must be one of ' . implode(', ', $actionTypes) . '', E_USER_ERROR);
         }
         $phrase = Config::inst()->get(static::class, $phrase . '_phrase');
         return _t('DashboardWelcomeQuicklinks.' . $phrase, $phrase);
@@ -69,6 +72,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static string $review_phrase = '☑';
 
     private static string $edit_phrase = '✎';
+    private static string $clear_phrase = '✖';
 
     private static string $url_segment = 'go';
 

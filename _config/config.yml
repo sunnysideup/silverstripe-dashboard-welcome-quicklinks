@@ -1,10 +1,16 @@
 ---
 Name: dashboard_welcome_quicklinks
 After:
-  - '#cmsdefaultadmin'
+  - "#cmsdefaultadmin"
 ---
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.css'
+    - "sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.css"
   extra_requirements_javascript:
-    - 'sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.js'
+    - "sunnysideup/dashboard-welcome-quicklinks: client/dist/dashboard.js"
+
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.dashboardQuicklinks:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "dashboardQuicklinks"

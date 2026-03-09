@@ -2,6 +2,7 @@ function dashboardWelcomeQuicklinksSetupInputAndFilter () {
   const targetSpan = document.querySelector(
     '.cms-content-header-info .breadcrumbs-wrapper'
   )
+  const wrapper = document.querySelector('.DashboardWelcomeQuicklinks')
 
   const inputBox = document.createElement('input')
   inputBox.type = 'text'
@@ -12,11 +13,6 @@ function dashboardWelcomeQuicklinksSetupInputAndFilter () {
   targetSpan.style.display = 'flex'
   targetSpan.style.justifyContent = 'space-between'
 
-  const originalDisplayState = new Map()
-  document.querySelectorAll('div.grid-cell .entries h2').forEach(entry => {
-    originalDisplayState.set(entry, entry.style.display)
-  })
-
   function filterGridCells () {
     const words = inputBox.value
       .trim()
@@ -26,20 +22,39 @@ function dashboardWelcomeQuicklinksSetupInputAndFilter () {
     const gridCells = document.querySelectorAll('div.grid-cell')
 
     if (words.length === 0) {
+      wrapper.classList.remove('is-filtered')
       gridCells.forEach(cell => {
         cell.style.display = ''
-      })
-      originalDisplayState.forEach((display, entry) => {
-        entry.style.display = display
+        cell.querySelectorAll('.entries h2').forEach(entry => {
+          entry.style.display = ''
+        })
       })
       return
     }
 
+    wrapper.classList.add('is-filtered')
+
     gridCells.forEach(cell => {
+      const heading = cell.querySelector('.header h1')
+      const headingText = heading
+        ? heading.textContent.trim().toLowerCase()
+        : ''
+      const headingMatches = words.every(word => headingText.includes(word))
+
+      if (headingMatches) {
+        cell.style.display = ''
+        cell.querySelectorAll('.entries h2').forEach(entry => {
+          entry.style.display = ''
+        })
+        return
+      }
+
       const entries = cell.querySelectorAll('.entries h2')
       let anyVisible = false
 
       entries.forEach(entry => {
+        // Skip the "… »" toggle button
+        if (entry.classList.contains('more-item-more')) return
         const text = entry.textContent.trim().toLowerCase()
         const matches = words.every(word => text.includes(word))
         entry.style.display = matches ? '' : 'none'
