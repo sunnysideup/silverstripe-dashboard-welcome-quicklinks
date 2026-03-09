@@ -200,7 +200,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             foreach ($shortcuts as $groupCode => $groupDetails) {
                 $colour = '';
                 if (! empty($groupDetails['Colour'])) {
-                    $colour = 'style="background-color: ' . $groupDetails['Colour'] . '"';
+                    $colour = 'style="background-color: ' . $groupDetails['Colour'] . ';"';
                 }
                 $icon = '';
                 if (! empty($groupDetails['IconClass'])) {
@@ -237,7 +237,16 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {
-            $colours .= ' .grid-wrapper .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') div.header {background-color: ' . $colour . '; color: ' . $this->getFontColor($colour) . '!important;}';
+            $colours .= '
+            .grid-wrapper {
+                .grid-cell:nth-child(' . $kcCount . 'n+' . ($key + 1) . ') {
+                    border: 1px solid ' . $colour . ';
+                    .header {
+                        background-color: ' . $colour . ';
+                        color: ' . $this->getFontColor($colour) . '!important;
+                    }
+                }
+            }';
         }
         $html .= '<script>window.setTimeout(dashboardWelcomeQuicklinksSetupInputAndFilter, 500)</script>';
         $html .= '<style>' . $colours . '</style>';
