@@ -1,41 +1,55 @@
-// Function to add the input box and set up the filtering behavior
 function dashboardWelcomeQuicklinksSetupInputAndFilter () {
-  // Locate the target span element
   const targetSpan = document.querySelector(
     '.cms-content-header-info .breadcrumbs-wrapper'
   )
 
-  // Create the input box
   const inputBox = document.createElement('input')
   inputBox.type = 'text'
   inputBox.placeholder = 'Type to filter quick-links...'
-  inputBox.classList.add('no-change-track')
-  inputBox.classList.add('quick-links-filter')
+  inputBox.classList.add('no-change-track', 'quick-links-filter')
 
-  // Append the input box to the target span
   targetSpan.appendChild(inputBox)
   targetSpan.style.display = 'flex'
   targetSpan.style.justifyContent = 'space-between'
 
-  // Function to filter grid cells based on input
+  const originalDisplayState = new Map()
+  document.querySelectorAll('div.grid-cell .entries h2').forEach(entry => {
+    originalDisplayState.set(entry, entry.style.display)
+  })
+
   function filterGridCells () {
-    const inputValue = inputBox.value.toLowerCase()
+    const words = inputBox.value
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
     const gridCells = document.querySelectorAll('div.grid-cell')
 
+    if (words.length === 0) {
+      gridCells.forEach(cell => {
+        cell.style.display = ''
+      })
+      originalDisplayState.forEach((display, entry) => {
+        entry.style.display = display
+      })
+      return
+    }
+
     gridCells.forEach(cell => {
-      // Check if the text in the cell includes the input value
-      if (
-        inputValue === '' ||
-        cell.textContent.toLowerCase().includes(inputValue)
-      ) {
-        cell.style.display = '' // Show the cell
-      } else {
-        cell.style.display = 'none' // Hide the cell
-      }
+      const entries = cell.querySelectorAll('.entries h2')
+      let anyVisible = false
+
+      entries.forEach(entry => {
+        const text = entry.textContent.trim().toLowerCase()
+        const matches = words.every(word => text.includes(word))
+        entry.style.display = matches ? '' : 'none'
+        if (matches) anyVisible = true
+      })
+
+      cell.style.display = anyVisible ? '' : 'none'
     })
   }
 
-  // Add event listener to the input box to filter as the user types
   inputBox.addEventListener('input', filterGridCells)
 }
 
