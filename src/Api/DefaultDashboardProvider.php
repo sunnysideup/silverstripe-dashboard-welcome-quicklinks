@@ -21,12 +21,10 @@ use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionRole;
+use SilverStripe\Security\Security;
 use SilverStripe\VersionedAdmin\ArchiveAdmin;
 use Sunnysideup\DashboardWelcomeQuicklinks\Admin\DashboardWelcomeQuicklinks;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinksProvider;
-
-use Psr\SimpleCache\CacheInterface;
-use SilverStripe\Security\Security;
 
 class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
 {
@@ -34,13 +32,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
 
     public function provideDashboardWelcomeQuicklinks(): array
     {
-        $cache = Injector::inst()->get(CacheInterface::class . '.dashboardQuicklinks');
-        $who = Security::getCurrentUser()->ID;
-        $cacheKey = 'quicklinks_' . $who;
-
-        if ($cache->has($cacheKey)) {
-            return $cache->get($cacheKey);
-        }
 
         $this->addPagesLinks();
         $this->addFindPages();
@@ -54,7 +45,6 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         $this->addCacheLinks();
 
         $links = DashboardWelcomeQuicklinks::get_links();
-        $cache->set($cacheKey, $links, 3600); // cache for 1 hour
 
         return $links;
     }
@@ -295,7 +285,10 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                                     $obj = $list->first();
                                 }
                                 if ($obj && $obj->hasMethod('CMSEditLink')) {
-                                    $link = $obj->CMSEditLink();
+                                    $link = $ma->getCMSEditLinkForManagedDataObject($obj);
+                                    if (! $link) {
+                                        $link = $obj->CMSEditLink();
+                                    }
                                     if ($link) {
                                         DashboardWelcomeQuicklinks::add_link($groupCode, DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' ' . $model::singleton()->i18n_singular_name(), $link);
                                         continue;

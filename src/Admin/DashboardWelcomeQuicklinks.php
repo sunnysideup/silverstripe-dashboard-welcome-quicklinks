@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
+use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
@@ -9,6 +10,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
@@ -274,6 +276,18 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     protected function getLinksFromImplementor()
     {
+        $cache = Injector::inst()->get(CacheInterface::class . '.dashboardQuicklinks');
+        $who = Security::getCurrentUser()->ID;
+        $cacheKey = 'quicklinks_' . $who;
+
+        if ($cache->has($cacheKey)) {
+            if (isset($_GET['flush'])) {
+                $cache->delete($cacheKey);
+            } else {
+                return $cache->get($cacheKey);
+            }
+        }
+
         $array = [];
         $useDefaultDashboard = (bool) $this->config()->get('use_default_dashboard_provider');
         $classNames = ClassInfo::implementorsOf(DashboardWelcomeQuicklinksProvider::class);
@@ -283,6 +297,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             }
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuicklinks();
         }
+        $cache->set($cacheKey, $array, 3600); // cache for 1 hour
         return $array;
     }
 
