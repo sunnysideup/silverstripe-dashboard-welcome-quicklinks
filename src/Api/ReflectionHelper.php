@@ -27,9 +27,6 @@ class ReflectionHelper
         // Get the protected property
         $property = $reflectionClass->getProperty($propertyName);
 
-        // Make the property accessible
-        $property->setAccessible(true);
-
         // Set the value of the protected property
         return new $className();
     }

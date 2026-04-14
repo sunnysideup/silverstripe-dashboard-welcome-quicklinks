@@ -2,17 +2,17 @@
 
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
+use SilverStripe\View\ArrayData;
+use SilverStripe\ORM\ArrayList;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\View\ArrayData;
 use Sunnysideup\DashboardWelcomeQuicklinks\Api\DefaultDashboardProvider;
 use Sunnysideup\DashboardWelcomeQuicklinks\Interfaces\DashboardWelcomeQuicklinksProvider;
 
@@ -44,6 +44,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             $keys = ['Title', 'Link'];
             $insideLink = array_combine($keys, $insideLink);
         }
+
         self::$links[$groupCode]['Items'][] = [
             'Title' => $title,
             'Link' => $link,
@@ -65,6 +66,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if (! in_array($phrase, $actionTypes, true)) {
             user_error('Phrase must be one of ' . implode(', ', $actionTypes) . '', E_USER_ERROR);
         }
+
         $phrase = Config::inst()->get(static::class, $phrase . '_phrase');
         return _t('DashboardWelcomeQuicklinks.' . $phrase, $phrase);
     }
@@ -74,6 +76,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     private static string $review_phrase = '☑';
 
     private static string $edit_phrase = '✎';
+
     private static string $clear_phrase = '✖';
 
     private static string $url_segment = 'go';
@@ -204,10 +207,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 if (! empty($groupDetails['Colour'])) {
                     $colour = 'style="background-color: ' . $groupDetails['Colour'] . ';"';
                 }
+
                 $icon = '';
                 if (! empty($groupDetails['IconClass'])) {
                     $icon = '<i class="' . $groupDetails['IconClass'] . '"></i> ';
                 }
+
                 $html .= '
                 <div class="grid-cell" ' . $colour . '>
                     <div class="header">
@@ -224,18 +229,23 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                             $entry['Link'] = $obj->Link();
                         }
                     }
+
                     $html .= $this->createInnerLink($entry, $pos, $items, $max);
                 }
+
                 $html .= '</div></div>';
             }
+
             $html .= '</div>';
         } else {
             $html .= '<p>Please start editing by making a selection from the left.</p>';
         }
+
         $kc = (array) $this->Config()->get('colour_options');
         if ($kc === []) {
             $kc = $this->Config()->get('default_colour_options');
         }
+
         $kcCount = count($kc);
         $colours = '';
         foreach ($kc as $key => $colour) {
@@ -250,6 +260,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 }
             }';
         }
+
         $html .= '<script>window.setTimeout(dashboardWelcomeQuicklinksSetupInputAndFilter, 500)</script>';
         $html .= '<style>' . $colours . '</style>';
         $form->Fields()->push(LiteralField::create('ShortCuts', $html));
@@ -258,7 +269,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     protected function createInnerLink($entry, $pos, $items, $max)
     {
         $html = '';
-        $entry['Class'] = $entry['Class'] ?? '';
+        $entry['Class'] ??= '';
         $entry['Class'] .= ($pos > $max) ? ' more-item' : '';
         $html .= $this->makeShortCut($entry)->Field();
         if ($pos > $max && count($items) == $pos + 1) {
@@ -271,6 +282,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                 ]
             )->Field();
         }
+
         return $html;
     }
 
@@ -295,8 +307,10 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
             if ($useDefaultDashboard === false && (string) $className === DefaultDashboardProvider::class) {
                 continue;
             }
+
             $array += Injector::inst()->get($className)->provideDashboardWelcomeQuicklinks();
         }
+
         $cache->set($cacheKey, $array, 3600); // cache for 1 hour
         return $array;
     }
@@ -308,6 +322,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if ($title === '+') {
             $tooltip = 'Add new item';
         }
+
         $link = (string) $entry['Link'];
         $onclick = (string) ($entry['OnClick'] ?? '');
         $script = (string) ($entry['Script'] ?? '');
@@ -321,35 +336,43 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if ($onclick !== '' && $onclick !== '0') {
             $onclick = ' onclick="' . $onclick . '"';
         }
+
         if ($script !== '' && $script !== '0') {
             $script = '<script>' . $script . '</script>';
         }
+
         $icon = '';
         if (! in_array($iconClass, [null, '', '0'], true)) {
             $icon = '<i class="' . $iconClass . '"></i> ';
         }
+
         if ($target === '' || $target === '0') {
             $target = '_self';
         }
+
         $tag = $isInsideLink ? 'span' : 'h2';
         if ($class !== '' && $class !== '0') {
             $class = ' class="' . $class . '"';
         }
+
         $insideLinkHTML = '';
         if ($insideLink !== []) {
             $insideLink['Class'] = ($insideLink['Class'] ?? '') . ' inside-link';
             $insideLinkHTML = $this->makeShortCut($insideLink, true);
         }
+
         $target = ' target="' . $target . '"';
         if ($tooltip !== '') {
             $tooltip = 'title="' . htmlspecialchars($tooltip, ENT_QUOTES) . '"';
         }
+
         if ($link !== '' && $link !== '0') {
             $html = '' . $script . '<' . $tag . '' . $class . '>' . $icon . '<a href="' . $link . '" ' . $target . ' ' . $onclick . ' ' . $tooltip . '>' . $title . '</a>' . $insideLinkHTML . '</' . $tag . '>';
         } else {
             $html = '' . $script . '<' . $tag . '' . $class . ' ' . $tooltip . '>' . $title . '' . $insideLinkHTML . '</' . $tag . '>
             ';
         }
+
         $html = preg_replace('/\s+/', ' ', $html);
         if ($isInsideLink) {
             return $html;
@@ -368,17 +391,18 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         if ($siteConfigTitle) {
             $app = $siteConfigTitle . ' (' . $app . ')';
         }
+
         return ($section = $this->SectionTitle()) ? sprintf('%s for %s', $section, $app) : $app;
     }
 
     /**
      * @param bool $unlinked
-     * @return ArrayList<ArrayData>
+     * @return \SilverStripe\Model\List\ArrayList<\SilverStripe\Model\ArrayData>
      */
     public function Breadcrumbs($unlinked = false)
     {
-        return new ArrayList([
-            new ArrayData([
+        return ArrayList::create([
+            ArrayData::create([
                 'Title' => $this->Title(),
                 'Link' => ($unlinked) ? false : $this->Link(),
             ]),
