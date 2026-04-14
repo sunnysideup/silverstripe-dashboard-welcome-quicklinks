@@ -397,7 +397,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     /**
      * @param bool $unlinked
-     * @return \SilverStripe\Model\List\ArrayList<\SilverStripe\Model\ArrayData>
+     * @return ArrayList<ArrayData>
      */
     public function Breadcrumbs($unlinked = false)
     {

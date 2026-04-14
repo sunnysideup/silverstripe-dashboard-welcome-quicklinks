@@ -74,7 +74,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         );
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Drafts (' . $draftCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Changes (' . $revisedCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
-        $pageLastEdited = DataObject::get('Page')->setUseCache(true)->filter('')->first();
+        $pageLastEdited = Page::get()->setUseCache(true)->filter('')->first();
         if ($pageLastEdited) {
             DashboardWelcomeQuicklinks::add_link('PAGES', '✎ Last Edited Page: ' . $pageLastEdited->Title, $pageLastEdited->CMSEditLink());
         }
