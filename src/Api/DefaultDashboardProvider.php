@@ -74,7 +74,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         );
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Drafts (' . $draftCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Changes (' . $revisedCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
-        $pageLastEdited = DataObject::get_one('Page', '', true, 'LastEdited DESC');
+        $pageLastEdited = DataObject::get('Page')->setUseCache(true)->filter('')->first();
         if ($pageLastEdited) {
             DashboardWelcomeQuicklinks::add_link('PAGES', '✎ Last Edited Page: ' . $pageLastEdited->Title, $pageLastEdited->CMSEditLink());
         }
@@ -112,7 +112,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                     ];
                 }
             } elseif ($pageCount === 1) {
-                $page = DataObject::get_one($pageClassName, ['ClassName' => $pageClassName]);
+                $page = DataObject::get($pageClassName)->setUseCache(true)->filter(['ClassName' => $pageClassName])->first();
                 if ($page->canEdit()) {
                     $pageTitle = $page->i18n_singular_name();
                     $insideLink = [];
@@ -290,9 +290,9 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                             $objectCount = $list->count();
                             if ($objectCount === 1) {
                                 $baseTable = Injector::inst()->get($model)->baseTable();
-                                $obj = DataObject::get_one($model, [$baseTable . '.ClassName' => $model]);
+                                $obj = DataObject::get($model)->setUseCache(true)->filter([$baseTable . '.ClassName' => $model])->first();
                                 if (! $obj) {
-                                    $obj = DataObject::get_one($model);
+                                    $obj = DataObject::get($model)->setUseCache(true)->first();
                                 }
 
                                 if (! $obj) {

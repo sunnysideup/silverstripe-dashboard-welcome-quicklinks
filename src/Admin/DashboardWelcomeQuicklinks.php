@@ -2,8 +2,8 @@
 
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
-use SilverStripe\View\ArrayData;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\ArrayData;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\ClassInfo;
@@ -224,7 +224,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     if (! empty($entry['Link']) && class_exists($entry['Link'])) {
                         $obj = Injector::inst()->get($entry['Link']);
                         if ($obj instanceof DataObject) {
-                            $entry['Link'] = DataObject::get_one($entry['Link'])->CMSEditLink();
+                            $entry['Link'] = DataObject::get($entry['Link'])->setUseCache(true)->first()->CMSEditLink();
                         } else {
                             $entry['Link'] = $obj->Link();
                         }
