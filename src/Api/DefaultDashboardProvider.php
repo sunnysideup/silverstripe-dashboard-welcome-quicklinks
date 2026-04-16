@@ -60,8 +60,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
     {
         DashboardWelcomeQuicklinks::add_group('PAGES', 'Pages', 10);
         $pagesCount = Page::get()->count();
-        $draftCount = CMSSiteTreeFilter_StatusDraftPages::create()->getFilteredPages()->count();
-        $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages()->count();
+        $draftCount = CMSSiteTreeFilter_StatusDraftPages::create()->getFilteredPages(Page::get())->count();
+        $revisedCount = CMSSiteTreeFilter_ChangedPages::create()->getFilteredPages(Page::get())->count();
         $add = [
             'Title' => DashboardWelcomeQuicklinks::get_base_phrase('add'),
             'Link' => '/admin/pages/add',
@@ -74,7 +74,7 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
         );
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Drafts (' . $draftCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_StatusDraftPages');
         DashboardWelcomeQuicklinks::add_link('PAGES', DashboardWelcomeQuicklinks::get_base_phrase('edit') . ' Unpublished Changes (' . $revisedCount . ')', '/admin/pages?q[FilterClass]=SilverStripe\CMS\Controllers\CMSSiteTreeFilter_ChangedPages');
-        $pageLastEdited = Page::get()->setUseCache(true)->filter('')->first();
+        $pageLastEdited = Page::get()->setUseCache(true)->sort('LastEdited', 'DESC')->first();
         if ($pageLastEdited) {
             DashboardWelcomeQuicklinks::add_link('PAGES', '✎ Last Edited Page: ' . $pageLastEdited->Title, $pageLastEdited->CMSEditLink());
         }
