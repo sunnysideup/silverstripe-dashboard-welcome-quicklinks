@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\DashboardWelcomeQuicklinks\Admin;
 
+use Override;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Model\ArrayData;
 use Psr\SimpleCache\CacheInterface;
@@ -172,6 +173,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
         '#FAFAFA',
     ];
 
+    #[Override]
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
@@ -384,6 +386,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
     /**
      * @return string
      */
+    #[Override]
     public function Title()
     {
         $app = $this->getApplicationName();
@@ -399,6 +402,7 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
      * @param bool $unlinked
      * @return ArrayList<ArrayData>
      */
+    #[Override]
     public function Breadcrumbs($unlinked = false)
     {
         return ArrayList::create([
