@@ -290,7 +290,8 @@ class DefaultDashboardProvider implements DashboardWelcomeQuicklinksProvider
                             $objectCount = $list->count();
                             if ($objectCount === 1) {
                                 $baseTable = Injector::inst()->get($model)->baseTable();
-                                $obj = DataObject::get($model)->setUseCache(true)->filter([$baseTable . '.ClassName' => $model])->first();
+                                // $obj = DataObject::get($model)->setUseCache(true)->filter([$baseTable . '.ClassName' => $model])->first();
+                                $obj = DataObject::get($model)->setUseCache(true)->filter(['ClassName' => $model])->first();
                                 if (! $obj) {
                                     $obj = DataObject::get($model)->setUseCache(true)->first();
                                 }
