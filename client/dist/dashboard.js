@@ -83,5 +83,5 @@ function dashboardWelcomeQuicklinksSetupInputAndFilterToggleMore (event) {
     sibling.style.display = areHidden ? 'block' : 'none'
   })
 
-  link.innerHTML = areHidden ? '… &laquo; ' : '… &raquo;'
+  link.innerHTML = areHidden ? '&laquo; ' : '…'
 }

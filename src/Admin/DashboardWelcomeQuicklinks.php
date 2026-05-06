@@ -82,21 +82,21 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
 
     private static string $url_segment = 'go';
 
-    private static $more_phrase = '… &raquo;';
+    private static string $more_phrase = '...';
 
     private static bool $use_default_dashboard_provider = true;
 
-    private static $menu_title = 'Quick-links';
+    private static string $menu_title = 'Quick-links';
 
-    private static $menu_icon_class = 'font-icon-dashboard';
+    private static string $menu_icon_class = 'font-icon-dashboard';
 
-    private static $menu_priority = 99999;
+    private static int $menu_priority = 99999;
 
-    private static $colour_options = [];
+    private static array $colour_options = [];
 
-    private static $max_shortcuts_per_group = 3;
+    private static int $max_shortcuts_per_group = 3;
 
-    private static $default_colour_options = [
+    private static array $default_colour_options = [
         '#0D47A1',
         '#01579B',
         '#006064',
@@ -203,8 +203,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     $a['SortOrder'] ?? 0;
                 }
             );
-
+            $count = 0;
             foreach ($shortcuts as $groupCode => $groupDetails) {
+                $count++;
+                if ($count > 100) {
+                    user_error('Too many groups. Please check your providers.', E_USER_ERROR);
+                }
                 $colour = '';
                 if (! empty($groupDetails['Colour'])) {
                     $colour = 'style="background-color: ' . $groupDetails['Colour'] . ';"';
@@ -222,7 +226,12 @@ class DashboardWelcomeQuicklinks extends LeftAndMain
                     </div>
                     <div class="entries">';
                 $items = $groupDetails['Items'] ?? [];
+                $foreachCount = 0;
                 foreach ($items as $pos => $entry) {
+                    $foreachCount++;
+                    if ($foreachCount > 100) {
+                        user_error('Too many items in group ' . $groupCode . '. Please check your providers.', E_USER_ERROR);
+                    }
                     if (! empty($entry['Link']) && class_exists($entry['Link'])) {
                         $obj = Injector::inst()->get($entry['Link']);
                         if ($obj instanceof DataObject) {
